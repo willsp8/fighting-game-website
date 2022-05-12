@@ -10,7 +10,7 @@ canvas.height = 576
 //draws onto canvas: note when you run this by itself you sould see a black screen that is 1024 by 576 pixels
 c.fillRect(0, 0, canvas.width, canvas.height)
 //step 1: project set up end 
-const gravity = 0.2
+const gravity = 0.7
 
 class Sprite {
     //note we cannot pass postion second and velocity first we will get errors so  the postion and velocity as one argument
@@ -31,6 +31,8 @@ class Sprite {
     //this will basically 
     update(){
         this.draw()
+
+        this.position.x += this.velocity.x
         //this will move the object by how much we set the velocity for player and enemy on the y axis
         //or that it will have 10 pixels added on to it every frame
         this.position.y += this.velocity.y
@@ -78,8 +80,25 @@ enemy.draw()
 
 console.log(player)
 
+const keys = {
+    a: {
+        pressed: false
+    },
+    d: {
+        pressed: false
+    }, 
+    ArrowRight: {
+        pressed: false
+    },
+    ArrowLeft: {
+        pressed: false
+    }
+}
+
+
 //animation loop 
 function animate(){
+
     //this will keep calling the animate function like a for loop/ infite loop until we tell it to stop
     window.requestAnimationFrame(animate)
 
@@ -89,8 +108,91 @@ function animate(){
     
     player.update()
     enemy.update()
+
+    // player movement
+    player.velocity.x = 0
+    if (keys.a.pressed && player.lastKey == 'a'){
+        player.velocity.x = -5
+    }else if(keys.d.pressed && player.lastKey == 'd'){
+        player.velocity.x = 5
+    }
+
+    //Enemy movement
+    enemy.velocity.x = 0
+    if (keys.ArrowLeft.pressed && enemy.lastKey == 'ArrowLeft'){
+        enemy.velocity.x = -5
+    }else if(keys.ArrowRight.pressed && enemy.lastKey == 'ArrowRight'){
+        enemy.velocity.x = 5
+    }
+
+
     //prints out if the animation loop is working 
     //console.log('go')
 }
 
 animate()
+
+//this method will listen to anything that is typed onto the keyboard and mouse
+window.addEventListener('keydown', (event) => {
+    // this will check we pressed a w s d keys 
+    switch (event.key){
+        case 'd':
+            //when d is press it will move the player on the x psotion by 1 pixel to the right 
+            keys.d.pressed =true
+            player.lastKey = 'd'
+            break
+        case 'a':
+            //when a is press it will move the player on the x psotion by 1 pixel to the the left 
+            keys.a.pressed =true
+            player.lastKey = 'a'
+            break
+            //this is for jump
+        case 'w':
+            //when a is press it will move the player on the x psotion by 1 pixel to the the left 
+            player.velocity.y = -20
+            break
+
+        case 'ArrowRight':
+            //when d is press it will move the Enemy on the x psotion by 1 pixel to the right 
+            keys.ArrowRight.pressed =true
+            enemy.lastKey = 'ArrowRight'
+            break
+        case 'ArrowLeft':
+            //when a is press it will move the player on the x psotion by 1 pixel to the the left 
+            keys.ArrowLeft.pressed =true
+            enemy.lastKey = 'ArrowLeft'
+            break
+            //this is for jump
+        case 'ArrowUp':
+            //when a is press it will move the player on the x psotion by 1 pixel to the the left 
+            enemy.velocity.y = -20
+            break
+    }
+    console.log(event.key)
+})
+
+//this method will listen to anything that is typed and than release or when key is up
+window.addEventListener('keyup', (event) => {
+    // this will check we pressed a w s d keys 
+    switch (event.key){
+        case 'd':
+            //when d is is up  it will stop the play moving to the right 
+            keys.d.pressed = false
+            break
+        case 'a':
+            //when a is is up  it will stop the play moving to the let
+            keys.a.pressed = false
+            break
+
+        //enemy keys here
+        case 'ArrowRight':
+            //when d is is up  it will stop the play moving to the right 
+            keys.ArrowRight.pressed = false
+            break
+        case 'ArrowLeft':
+            //when a is is up  it will stop the play moving to the let
+            keys.ArrowLeft.pressed = false
+            break
+        
+    }
+})
