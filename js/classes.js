@@ -1,3 +1,19 @@
+const keys1 = {
+    a: {
+        pressed: false
+    },
+    d: {
+        pressed: false
+    }, 
+    ArrowRight: {
+        pressed: false
+    },
+    ArrowLeft: {
+        pressed: false
+    }
+}
+
+
 class Sprite {
     //note we cannot pass postion second and velocity first we will get errors so  the postion and velocity as one argument
     constructor({position, velocity, imageSrc, scale = 1, fm = 1, offset= {x: 0, y: 0}}) {
@@ -30,7 +46,7 @@ class Sprite {
             this.image.width / this.fm,
             this.image.height,
             this.position.x - this.offset.x, 
-            this.position.y - this.offset.x, 
+            this.position.y - this.offset.y, 
             (this.image.width / this.fm) * this.scale, 
             this.image.height * this.scale)
     }
@@ -58,7 +74,8 @@ class Sprite {
 
 class Fighter extends Sprite{
     //note we cannot pass postion second and velocity first we will get errors so  the postion and velocity as one argument
-    constructor({position, velocity, color = 'red', imageSrc, scale = 1, fm = 1, offset= {x: 0, y: 0}, sprites}) {
+    constructor({position, velocity, color = 'red', imageSrc, scale = 1, fm = 1, offset= {x: 0, y: 0}, sprites,
+                 attackBox = {offset: {}, width: undefined, height: undefined}}) {
         super({
             position,
             imageSrc,
@@ -77,9 +94,9 @@ class Fighter extends Sprite{
                 y: this.position.y
             },
 
-            offset,
-            width: 100,
-            height: 50
+            offset: attackBox.offset,
+            width: attackBox.width,
+            height: attackBox.height
         }
         this.color = color
         this.isAttacking
@@ -103,8 +120,13 @@ class Fighter extends Sprite{
         this.draw()
         this.animateFrames()
         this.attackBox.position.x = this.position.x + this.attackBox.offset.x
-        this.attackBox.position.y = this.position.y
-
+        this.attackBox.position.y = this.position.y + this.attackBox.offset.y
+        //collision box of the attack weapon
+        // c.fillRect(this.attackBox.position.x, this.attackBox.position.y, 
+        //     this.attackBox.width, this.attackBox.height)
+        // collision box of the player
+        // c.fillRect(this.position.x, this.position.y, 
+        //     this.width, this.height)
         this.position.x += this.velocity.x
         //this will move the object by how much we set the velocity for player and enemy on the y axis
         //or that it will have 10 pixels added on to it every frame
@@ -113,61 +135,80 @@ class Fighter extends Sprite{
         //this basically checks if the player object is going byond the canvas in which it will stop once it reaches the border on the y axis
         if(this.position.y + this.height + this.velocity.y >= canvas.height -50 ){
             this.velocity.y = 0
+            this.position.y = 376
            // this.position.y = 330
             // now this will add gravity and will stop if the places try to go out of bounds
         }else this.velocity.y += gravity
+        console.log(this.position.y)
     }
 
     attack(){
+        if(lastKey1 == 'd'){
+            this.switchSprite('attack1Right') 
+        }
+        if(lastKey1 == 'a'){
+            this.switchSprite('attack1Left') 
+        }
+        
         this.isAttacking = true
-        // if(this.isAttacking == true ){
-        //     this.switchSprite('attack1Right')
-        // }
+    
         
         setTimeout(() => {
             this.isAttacking = false
-        }, 200)
+        }, 100)
     }
 
     switchSprite(sprite){
+        if(this.image == this.sprites.attack1Right.image && this.frameCurrent < this.sprites.attack1Right.fm - 1)return
+        if(this.image == this.sprites.attack1Left.image && this.frameCurrent < this.sprites.attack1Left.fm - 1)return
         switch(sprite) {
             case 'idle':
-                if(this.image !== this.sprites.idle.image){
+                if(this.image !== this.sprites.idle.image)
+                    
                     this.image = this.sprites.idle.image
+                   // console.log(this.sprites.idle.fm)
                     this.fm = this.sprites.idle.fm
+                   this.frameCurrent = 0
+                
+            break
+            case 'idleLeft':
+                if(this.image !== this.sprites.idleLeft.image){
+                    this.image = this.sprites.idleLeft.image
+                    this.fm = this.sprites.idleLeft.fm
                     this.frameCurrent = 0
                 }
             break
-            case 'idleLeft':
-                if(this.image !== this.position.idleLeft.image){
-                    this.image = this.sprites.idleLeft.image
-                    this.fm = this.sprites.idleLeft.fm
+            case 'runLeft':
+                if(this.image !== this.sprites.runLeft.image){
+                    this.image = this.sprites.runLeft.image
+                    this.fm = this.sprites.runLeft.fm
                     this.frameCurrent = 0
                 }
             break
             case 'runRight':
                 if(this.image !== this.sprites.runRight.image){
                     this.image = this.sprites.runRight.image
+                    console.log(this.sprites.runRight.fm)
                     this.fm = this.sprites.runRight.fm
                     this.frameCurrent = 0
                 }
             break
-            case 'jumpright':
-                if(this.image !== this.position.jumpright.image){
+            case 'jumpRight':
+                if(this.image !== this.sprites.jumpright.image){
                     this.image = this.sprites.jumpright.image
                     this.fm = this.sprites.jumpright.fm
                     this.frameCurrent = 0
                 }
             break
             case 'jumpLeft':
-                if(this.image !== this.position.jumpLeft.image){
+                if(this.image !== this.sprites.jumpLeft.image){
                     this.image = this.sprites.jumpLeft.image
                     this.fm = this.sprites.jumpLeft.fm
                     this.frameCurrent = 0
                 }
                 
             break
-            case 'idle':
+            case 'idleLeft':
                 if(this.image !== this.sprites.idle.image){
                     this.image = this.sprites.idle.image
                     this.fm = this.sprites.idle.fm
@@ -176,11 +217,109 @@ class Fighter extends Sprite{
             break
             case 'attack1Right':
                 if(this.image !== this.sprites.attack1Right.image){
-                    player.image = player.sprites.attack1Right.image
-                    player.fm = player.sprites.attack1Right.fm
+                    this.image = this.sprites.attack1Right.image
+                    this.fm = this.sprites.attack1Right.fm
+                    this.frameCurrent = 0
+                }
+            break
+            case 'attack1Left':
+                if(this.image !== this.sprites.attack1Left.image){
+                    this.image = this.sprites.attack1Left.image
+                    this.fm = this.sprites.attack1Left.fm
+                    this.frameCurrent = 0
+                }
+            break
+            case 'fallRight':
+                if(this.image !== this.sprites.fall.image){
+                    this.image = this.sprites.fall.image
+                    this.fm = this.sprites.fall.fm
+                    this.frameCurrent = 0
+                }
+            break
+            case 'fallLeft':
+                if(this.image !== this.sprites.fallLeft.image){
+                    this.image = this.sprites.fallLeft.image
+                    this.fm = this.sprites.fallLeft.fm
                     this.frameCurrent = 0
                 }
             break
         }
     }
 }
+
+
+
+
+window.addEventListener('keydown', (event) => {
+    // this will check we pressed a w s d keys 
+    switch (event.key){
+        case 'd':
+            //when d is press it will move the player on the x psotion by 1 pixel to the right 
+            keys1.d.pressed =true
+            lastKey1 = 'd'
+            break
+        case 'a':
+            //when a is press it will move the player on the x psotion by 1 pixel to the the left 
+            keys1.a.pressed =true
+           lastKey1 = 'a'
+            break
+            //this is for jump
+        case 'w':
+            //when a is press it will move the player on the x psotion by 1 pixel to the the left 
+            //player.velocity.y = -20
+            break
+        case ' ':
+           // player.attack()
+            break
+        case 'ArrowRight':
+            //when d is press it will move the Enemy on the x psotion by 1 pixel to the right 
+            keys1.ArrowRight.pressed =true
+           // enemy.lastKey = 'ArrowRight'
+            break
+        case 'ArrowLeft':
+            //when a is press it will move the player on the x psotion by 1 pixel to the the left 
+            keys1.ArrowLeft.pressed =true
+           // enemy.lastKey = 'ArrowLeft'
+            break
+            //this is for jump
+        case 'ArrowUp':
+            //when a is press it will move the player on the x psotion by 1 pixel to the the left 
+            
+            break
+        case 'ArrowDown':
+            // 
+            //enemy.isAttacking = true
+            break
+        case 'Shift':
+            keys1.shift.pressed = true 
+            //timespressed = 0
+            break
+    }
+    //console.log(event.key)
+})
+
+//this method will listen to anything that is typed and than release or when key is up
+window.addEventListener('keyup', (event) => {
+    // this will check we pressed a w s d keys 
+    switch (event.key){
+        case 'd':
+            //when d is is up  it will stop the play moving to the right 
+            keys1.d.pressed = false
+            break
+        case 'a':
+            //when a is is up  it will stop the play moving to the let
+            keys1.a.pressed = false
+            break
+
+        //enemy keys here
+        case 'ArrowRight':
+            //when d is is up  it will stop the play moving to the right 
+            keys.ArrowRight.pressed = false
+            break
+        case 'ArrowLeft':
+            //when a is is up  it will stop the play moving to the let
+            keys.ArrowLeft.pressed = false
+            break
+        
+    }
+})

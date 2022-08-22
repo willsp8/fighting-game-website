@@ -49,8 +49,8 @@ const player = new Fighter({
     scale: 2.5,
 
     offset: {
-        x: 215,
-        y: 157
+        x: 200,
+        y: 140
     },
     sprites: {
         idle:{
@@ -94,6 +94,14 @@ const player = new Fighter({
             fm: 7
         }
 
+    },
+    attackBox: {
+        offset: {
+            x: 20,
+            y: 0
+        },
+        width: 100,
+        height: 50
     }
 })
 
@@ -104,18 +112,72 @@ player.draw()
 const enemy = new Fighter({
     position: {
         x: 400,
-        y: 100
+        y: 400
     },
     velocity: {
         x: 0,
         y: 0
     },
-    imageSrc: './res/shop.png',
+    imageSrc: './res/player/Idle.png',
     offset: {
-        x: -50,
-        y: 0
+        x: 200,
+        y: 150
     },
-    color:  'blue'
+    color:  'blue',
+    fm: 11, 
+    scale: 2.5,
+
+    sprites: {
+        idle:{
+            imageSrc:'./res/player/Idle.png',
+            fm: 11,
+        },
+        idleLeft:{
+            imageSrc:'./res/player/IdleLeft.png',
+            fm: 11,
+        },
+        runRight: {
+            imageSrc: './res/player/Run.png',
+            fm: 8
+        },
+        runLeft: {
+            imageSrc: './res/player/RunLeft.png',
+            fm: 8
+        },
+        jumpright: {
+            imageSrc: './res/player/Jump.png',
+            fm: 3
+        }, 
+        jumpLeft: {
+            imageSrc: './res/player/JumpLeft.png',
+            fm: 3
+        },
+        fall: {
+            imageSrc: './res/player/Fall.png',
+            fm: 3
+        }, 
+        fallLeft: {
+            imageSrc: './res/player/FallLeft.png',
+            fm: 3
+        }, 
+        attack1Right: {
+            imageSrc: './res/player/Attack1.png',
+            fm: 7
+        }, 
+        attack1Left: {
+            imageSrc: './res/player/Attack1Left.png',
+            fm: 7
+        }
+
+    },
+    attackBox: {
+        offset: {
+            x: 20,
+            y: 0
+        },
+        width: 100,
+        height: 50
+    }
 })
 
 console.log(enemy)
@@ -159,32 +221,47 @@ function animate(){
     background.update()
     shop.update()
     player.update()
-    //enemy.update()
-    
+    enemy.update()
+    //enemy.velocity.y = 0
 
     // player movement
     player.velocity.x = 0
-    player.image = player.sprites.idle.image
-    player.fm = player.sprites.idle.fm
-    if(player.image == player.sprites.attack1Right.image){
+    // player.image = player.sprites.idle.image
+    // player.fm = player.sprites.idle.fm
+    // player.switchSprite('idle')
+    // if(player.image == player.sprites.attack1Right.image){
 
-        return 
-    } 
-    if(player.image == player.sprites.attack1Left.image){
+    //     return 
+    // } 
+    // if(player.image == player.sprites.attack1Left.image){
 
-        return 
-    } 
-    if(player.isAttacking == true && player.lastKey == 'd'){
-        console.log('attack right')
-        player.image = player.sprites.attack1Right.image
-        player.fm = player.sprites.attack1Right.fm
-    }else if(player.isAttacking == true && player.lastKey == 'a'){
+    //     return 
+    // } 
+    // if(player.isAttacking == true && player.lastKey == 'd'){
+    //     console.log('attack right')
+    //     player.image = player.sprites.attack1Right.image
+    //     player.fm = player.sprites.attack1Right.fm
+    //     player.switchSprite('attack1Right')
+    // }else if(player.isAttacking == true && player.lastKey == 'a'){
         
-            console.log('attack left')
-            player.image = player.sprites.attack1Left.image
-            player.fm = player.sprites.attack1Left.fm
+    //         console.log('attack left')
+    //         // player.image = player.sprites.attack1Left.image
+    //         // player.fm = player.sprites.attack1Left.fm
+    //         player.switchSprite('attack1Left')
         
+    // }
+    
+
+    // this will change the direction of the attack box
+    if(player.lastKey == 'a' && player.isAttacking == true){
+        console.log('mount')
+        player.attackBox.offset.x = -80
+    }else if(player.lastKey == 'd' && player.isAttacking == true){
+        console.log('mount')
+        player.attackBox.offset.x = 20
     }
+
+
 
     if (keys.a.pressed && player.lastKey == 'a' && moving == true){
         
@@ -195,7 +272,7 @@ function animate(){
             posY: 0
         })){
     
-            console.log('colliffde')
+            console.log('collide')
             //player.velocity.x =  +6
            // moving = false
         }else if(
@@ -206,8 +283,9 @@ function animate(){
                 posY: 0
             }) == false 
         ){  
-            player.image = player.sprites.runLeft.image
-            player.fm = player.sprites.runLeft.fm
+            // player.image = player.sprites.runLeft.image
+            // player.fm = player.sprites.runLeft.fm
+            player.switchSprite('runLeft')
             player.attackBox.position.x = -10
             player.velocity.x =  -5
             
@@ -221,7 +299,7 @@ function animate(){
             posY: 0
         })){
     
-            console.log('colliffde')
+            console.log('collide')
             //player.velocity.x =  -6
            // moving = false
         }else if(
@@ -232,33 +310,42 @@ function animate(){
                 posY: 0
             }) == false 
         ){  
-            player.image = player.sprites.runRight.image
-            player.fm = player.sprites.runRight.fm
+            // player.image = player.sprites.runRight.image
+            // player.fm = player.sprites.runRight.fm
+            player.switchSprite('runRight')
             player.attackBox.position.x = -10
             player.velocity.x = 5
             
         }
         
-    }else if(player.isAttacking == false  && player.lastKey == 'a'){
-        console.log('leftside')
-        player.image = player.sprites.idleLeft.image
-        player.fm = player.sprites.idleLeft.fm
+     }else if(player.lastKey == 'a' && player.isAttacking == false){
+        //console.log('leftside')
+        // player.image = player.sprites.idleLeft.image
+        // player.fm = player.sprites.idleLeft.fm
+        player.switchSprite('idleLeft')
+    }else if( player.isAttacking == false){
+        player.switchSprite('idle')
     }
 
     
 
     if(player.velocity.y < 0 && player.lastKey == 'd'){
-        player.image = player.sprites.jumpright.image
-        player.fm = player.sprites.jumpright.fm
+        // player.image = player.sprites.jumpright.image
+        //player.fm = player.sprites.jumpright.fm
+        player.switchSprite('jumpRight')
+       // player.fm = player.sprites.jumpright.fm
     }else if(player.velocity.y > 0 && player.lastKey == 'd'){
-        player.image = player.sprites.fall.image
-        player.fm = player.sprites.fall.fm
+        // player.image = player.sprites.fall.image
+        // player.fm = player.sprites.fall.fm
+        player.switchSprite('fallRight')
     }else if(player.velocity.y < 0 && player.lastKey == 'a'){
-        player.image = player.sprites.jumpLeft.image
-        player.fm = player.sprites.jumpLeft.fm
+        // player.image = player.sprites.jumpLeft.image
+        // player.fm = player.sprites.jumpLeft.fm
+        player.switchSprite('jumpLeft')
     }else if(player.velocity.y > 0 && player.lastKey == 'a'){
-        player.image = player.sprites.fallLeft.image
-        player.fm = player.sprites.fallLeft.fm
+        // player.image = player.sprites.fallLeft.image
+        // player.fm = player.sprites.fallLeft.fm
+        player.switchSprite('fallLeft')
     }
 
 
@@ -267,11 +354,13 @@ function animate(){
         rectangle1: player,
         rectangle2: enemy,
         posX: 0,
-        posY: -15
+        posY: -7
     })){
         console.log('doblue')
         // use this for when you collide with something thats not a player
+        player.switchSprite('idle')
         player.velocity.y =  0
+        //player.switchSprite()
         // use when you collide with a player
     }
 
@@ -299,6 +388,10 @@ function animate(){
             console.log('go')
     }
 
+    // if player misses 
+    if(player.isAttacking && player.frameCurrent == 4){
+        player.isAttacking = false
+    }
     //detect for collision for enemy
     if( rechtangularCollision({
         rectangle1: enemy,
@@ -310,6 +403,10 @@ function animate(){
         player.health -= 20
         document.querySelector('#playerHealth').style.width = player.health + '%' 
         console.log('enemy attack worked')
+    }
+
+    if(enemy.isAttacking && enemy.frameCurrent == 4){
+        enemy.isAttacking = false
     }
 
     //end game based on health
