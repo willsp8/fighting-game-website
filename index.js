@@ -12,72 +12,29 @@ c.fillRect(0, 0, canvas.width, canvas.height)
 //step 1: project set up end 
 const gravity = 0.7
 
-class Sprite {
-    //note we cannot pass postion second and velocity first we will get errors so  the postion and velocity as one argument
-    constructor({position, velocity, color = 'red', offset}) {
-        this.position = position
-        this.velocity = velocity
-        this.width = 50
-        this.height = 150
-        this.lastKey
-        this.attackBox = {
-            position: {
-                x: this.position.x,
-                y: this.position.y
-            },
+const background = new Sprite({
+    position: {
+        x: 0,
+        y: 0,
+    },
+    imageSrc: './res/middleground.png'
+    
+})
 
-            offset,
-            width: 100,
-            height: 50
-        }
-        this.color = color
-        this.isAttacking
-        this.health = 100
-    }
+const shop = new Sprite({
+    position: {
+        x:500,
+        y: 130
+    },
+    imageSrc: './res/shop.png',
+    scale: 2.7,
+    fm: 6
 
-    draw() {
-        // makes our rectangle red 
-        c.fillStyle = this.color
-        //this draws a rectangle onto the screen 
-        //this references our player object drawing a rechtangle with the x and y of our player object
-        c.fillRect(this.position.x, this.position.y, this.width, this.height)
-
-        //attack box is drawn
-        if(this.isAttacking){
-        c.fillStyle = 'green'
-        c.fillRect(this.attackBox.position.x, this.attackBox.position.y, this.attackBox.width, this.attackBox.height)
-        }
-    }
-
-    //this will basically 
-    update(){
-        this.draw()
-        this.attackBox.position.x = this.position.x + this.attackBox.offset.x
-        this.attackBox.position.y = this.position.y
-
-        this.position.x += this.velocity.x
-        //this will move the object by how much we set the velocity for player and enemy on the y axis
-        //or that it will have 10 pixels added on to it every frame
-        this.position.y += this.velocity.y
-
-        //this basically checks if the player object is going byond the canvas in which it will stop once it reaches the border on the y axis
-        if(this.position.y + this.height + this.velocity.y >= canvas.height ){
-            this.velocity.y = 0
-            // now this will add gravity and will stop if the places try to go out of bounds
-        }else this.velocity.y += gravity
-    }
-
-    attack(){
-        this.isAttacking = true
-        setTimeout(() => {
-            this.isAttacking = false
-        }, 100)
-    }
-}
+})
 
 // this is where we are going to place our character
 // also this is an player object
-const player = new Sprite({
+const player = new Fighter({
     // wrapping the x and y with position
     position: {
         x: 0,
@@ -87,9 +44,56 @@ const player = new Sprite({
         x: 0,
         y: 0
     },
+    imageSrc: './res/player/Idle.png',
+    fm: 11, 
+    scale: 2.5,
+
     offset: {
-        x: 0,
-        y: 0
+        x: 215,
+        y: 157
+    },
+    sprites: {
+        idle:{
+            imageSrc:'./res/player/Idle.png',
+            fm: 11,
+        },
+        idleLeft:{
+            imageSrc:'./res/player/IdleLeft.png',
+            fm: 11,
+        },
+        runRight: {
+            imageSrc: './res/player/Run.png',
+            fm: 8
+        },
+        runLeft: {
+            imageSrc: './res/player/RunLeft.png',
+            fm: 8
+        },
+        jumpright: {
+            imageSrc: './res/player/Jump.png',
+            fm: 3
+        }, 
+        jumpLeft: {
+            imageSrc: './res/player/JumpLeft.png',
+            fm: 3
+        },
+        fall: {
+            imageSrc: './res/player/Fall.png',
+            fm: 3
+        }, 
+        fallLeft: {
+            imageSrc: './res/player/FallLeft.png',
+            fm: 3
+        }, 
+        attack1Right: {
+            imageSrc: './res/player/Attack1.png',
+            fm: 7
+        }, 
+        attack1Left: {
+            imageSrc: './res/player/Attack1Left.png',
+            fm: 7
+        }
+
     }
 })
 
@@ -97,7 +101,7 @@ const player = new Sprite({
 player.draw()
 
 //basically enemeny is equal to new sprite class in
-const enemy = new Sprite({
+const enemy = new Fighter({
     position: {
         x: 400,
         y: 100
@@ -106,12 +110,15 @@ const enemy = new Sprite({
         x: 0,
         y: 0
     },
+    imageSrc: './res/shop.png',
     offset: {
         x: -50,
         y: 0
     },
     color:  'blue'
 })
+
+console.log(enemy)
 
 //draws enemy
 enemy.draw()
@@ -134,58 +141,11 @@ const keys = {
     }
 }
 
-function rechtangularCollision({rectangle1, rectangle2}) {
-    return(
-        rectangle1.attackBox.position.x + rectangle1.attackBox.width >= rectangle2.position.x 
-        && rectangle1.attackBox.position.x <= rectangle2.position.x + rectangle2.width &&
-        rectangle1.attackBox.position.y + rectangle1.attackBox.height >= rectangle2.position.y
-        && rectangle1.attackBox.position.y <= rectangle2.position.y + rectangle2.height &&
-        rectangle1.isAttacking
-    )
-}
 
-//this determinds the winner
-function determineWinnder({player, enemy, timerId}){
-    //this will stop the time if one player wins before the time runs out 
-    clearTimeout(timerId)
-    //this will change the display style back to flex right now its on none 
-    document.querySelector('#displayText').style.display = 'flex'
-    if(player.health == enemy.health) {
-        // this will call the displayText Id and display tie when the timer runss out and both enemy and player have equal health
-        document.querySelector('#displayText').innerHTML = 'Tie'
-    }else if (player.health > enemy.health){
-        // this will call the displayText Id and display tie when the timer runss out and player has more health
-        document.querySelector('#displayText').innerHTML = 'Player 1 wins'
-    }else if(enemy.health > player.health){
-        // this will call the displayText Id and display tie when the timer runss out and enemy has more health
-        document.querySelector('#displayText').innerHTML = 'Player 2 wins'
-    }
-}
-
-// weare createing an infite loop in which setTimeout(decreaseTimer) is looping through each other same as animate loop
-let timer = 60
-let TimerId
-function decreaeTimer(){
-    if (timer > 0) {
-        timerId = setTimeout(decreaeTimer, 1000)
-        timer--
-        //this selectes the timer label we have index.html and the innerHTML = timer will take that 10 we have in the div and substract from it 
-        document.querySelector('#timer').innerHTML = timer
-    }
-
-    //this determines the winner when timer reaches 0
-    if(timer == 0){
-        //determineWinner Function call
-        determineWinnder({player, enemy, timerId})
-
-
-    }
-    
-}
 
 decreaeTimer()
 
-
+let moving = true
 //animation loop 
 function animate(){
 
@@ -196,15 +156,123 @@ function animate(){
     c.fillStyle = 'black'
     c.fillRect(0,0, canvas.width, canvas.height)
     
+    background.update()
+    shop.update()
     player.update()
-    enemy.update()
+    //enemy.update()
+    
 
     // player movement
     player.velocity.x = 0
-    if (keys.a.pressed && player.lastKey == 'a'){
-        player.velocity.x = -5
-    }else if(keys.d.pressed && player.lastKey == 'd'){
-        player.velocity.x = 5
+    player.image = player.sprites.idle.image
+    player.fm = player.sprites.idle.fm
+    if(player.image == player.sprites.attack1Right.image){
+
+        return 
+    } 
+    if(player.image == player.sprites.attack1Left.image){
+
+        return 
+    } 
+    if(player.isAttacking == true && player.lastKey == 'd'){
+        console.log('attack right')
+        player.image = player.sprites.attack1Right.image
+        player.fm = player.sprites.attack1Right.fm
+    }else if(player.isAttacking == true && player.lastKey == 'a'){
+        
+            console.log('attack left')
+            player.image = player.sprites.attack1Left.image
+            player.fm = player.sprites.attack1Left.fm
+        
+    }
+
+    if (keys.a.pressed && player.lastKey == 'a' && moving == true){
+        
+        if(rechtangularCollision2({
+            rectangle1: player,
+            rectangle2: enemy,
+            posX: 5,
+            posY: 0
+        })){
+    
+            console.log('colliffde')
+            //player.velocity.x =  +6
+           // moving = false
+        }else if(
+            rechtangularCollision2({
+                rectangle1: player,
+                rectangle2: enemy,
+                posX: 5,
+                posY: 0
+            }) == false 
+        ){  
+            player.image = player.sprites.runLeft.image
+            player.fm = player.sprites.runLeft.fm
+            player.attackBox.position.x = -10
+            player.velocity.x =  -5
+            
+        }
+        
+    }else if(keys.d.pressed && player.lastKey == 'd' && moving == true){
+        if(rechtangularCollision2({
+            rectangle1: player,
+            rectangle2: enemy,
+            posX: -5,
+            posY: 0
+        })){
+    
+            console.log('colliffde')
+            //player.velocity.x =  -6
+           // moving = false
+        }else if(
+            rechtangularCollision2({
+                rectangle1: player,
+                rectangle2: enemy,
+                posX: -5,
+                posY: 0
+            }) == false 
+        ){  
+            player.image = player.sprites.runRight.image
+            player.fm = player.sprites.runRight.fm
+            player.attackBox.position.x = -10
+            player.velocity.x = 5
+            
+        }
+        
+    }else if(player.isAttacking == false  && player.lastKey == 'a'){
+        console.log('leftside')
+        player.image = player.sprites.idleLeft.image
+        player.fm = player.sprites.idleLeft.fm
+    }
+
+    
+
+    if(player.velocity.y < 0 && player.lastKey == 'd'){
+        player.image = player.sprites.jumpright.image
+        player.fm = player.sprites.jumpright.fm
+    }else if(player.velocity.y > 0 && player.lastKey == 'd'){
+        player.image = player.sprites.fall.image
+        player.fm = player.sprites.fall.fm
+    }else if(player.velocity.y < 0 && player.lastKey == 'a'){
+        player.image = player.sprites.jumpLeft.image
+        player.fm = player.sprites.jumpLeft.fm
+    }else if(player.velocity.y > 0 && player.lastKey == 'a'){
+        player.image = player.sprites.fallLeft.image
+        player.fm = player.sprites.fallLeft.fm
+    }
+
+
+    // use this for when you collide with something thats not a player
+    if(rechtangularCollision2({
+        rectangle1: player,
+        rectangle2: enemy,
+        posX: 0,
+        posY: -15
+    })){
+        console.log('doblue')
+        // use this for when you collide with something thats not a player
+        player.velocity.y =  0
+        // use when you collide with a player
     }
 
     //Enemy movement
@@ -214,6 +282,8 @@ function animate(){
     }else if(keys.ArrowRight.pressed && enemy.lastKey == 'ArrowRight'){
         enemy.velocity.x = 5
     }
+
+    
 
     //detect for collision for player 
     if( rechtangularCollision({
@@ -294,6 +364,10 @@ window.addEventListener('keydown', (event) => {
         case 'ArrowDown':
             // 
             enemy.isAttacking = true
+            break
+        case 'Shift':
+            keys.shift.pressed = true 
+            //timespressed = 0
             break
     }
     //console.log(event.key)
