@@ -92,6 +92,10 @@ const player = new Fighter({
         attack1Left: {
             imageSrc: './res/player/Attack1Left.png',
             fm: 7
+        }, 
+        takeHitRight: {
+            imageSrc: './res/player/Take Hit.png',
+            fm: 4
         }
 
     },
@@ -167,6 +171,10 @@ const enemy = new Fighter({
         attack1Left: {
             imageSrc: './res/player/Attack1Left.png',
             fm: 7
+        }, 
+        takeHitRight: {
+            imageSrc: './res/player/Take Hit.png',
+            fm: 4
         }
 
     },
@@ -332,10 +340,24 @@ function animate(){
         // player.image = player.sprites.idleLeft.image
         // player.fm = player.sprites.idleLeft.fm
         player.switchSprite('idleLeft')
-    }else if( player.isAttacking == false){
+    }else if( player.lastKey == 'd' && player.isAttacking == false){
+        console.log('idle right')
         player.switchSprite('idle')
     }
+    
+    if(keys.d.pressed && player.position.x > 900){
+        console.log('player is moving')
+        // than move the 
+        player.velocity.x = 0
+        shop.position.x -= 5 
 
+    }else if(keys.a.pressed && player.position.x < 40){
+        player.velocity.x = 0
+        shop.position.x += 5 
+    }
+
+    console.log(player.position.x)
+    // this moves the boundaries and other stuff to make it look like we are moving 
     
 
     if(player.velocity.y < 0 && player.lastKey == 'd'){
@@ -418,17 +440,18 @@ function animate(){
             rectangle1: player,
             rectangle2: enemy
         }) && 
-        player.isAttacking
+        player.isAttacking 
         ){
+            enemy.takeHit()
             player.isAttacking = false 
             //this is a clue on how to store js info into html into python into sql
-            enemy.health -= 20
+            //enemy.health -= 20
             document.querySelector('#enemyHealth').style.width = enemy.health + '%'
             console.log('go')
     }
 
     // if player misses 
-    if(player.isAttacking && player.frameCurrent == 4){
+    if(player.isAttacking && player.frameCurrent === 3){
         player.isAttacking = false
     }
     //detect for collision for enemy
@@ -438,13 +461,15 @@ function animate(){
     }) && 
     enemy.isAttacking
     ){
+        player.takeHit()
         enemy.isAttacking = false  
-        player.health -= 20
+       
+        //player.health -= 20
         document.querySelector('#playerHealth').style.width = player.health + '%' 
         console.log('enemy attack worked')
     }
 
-    if(enemy.isAttacking && enemy.frameCurrent == 4){
+    if(enemy.isAttacking && enemy.frameCurrent == 2){
         enemy.isAttacking = false
     }
 

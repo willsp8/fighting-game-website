@@ -122,11 +122,11 @@ class Fighter extends Sprite{
         this.attackBox.position.x = this.position.x + this.attackBox.offset.x
         this.attackBox.position.y = this.position.y + this.attackBox.offset.y
         //collision box of the attack weapon
-        c.fillRect(this.attackBox.position.x, this.attackBox.position.y, 
-            this.attackBox.width, this.attackBox.height)
-        //collision box of the player
-        c.fillRect(this.position.x, this.position.y, 
-            this.width, this.height)
+        // c.fillRect(this.attackBox.position.x, this.attackBox.position.y, 
+        //     this.attackBox.width, this.attackBox.height)
+        // //collision box of the player
+        // c.fillRect(this.position.x, this.position.y, 
+        //     this.width, this.height)
         this.position.x += this.velocity.x
         //this will move the object by how much we set the velocity for player and enemy on the y axis
         //or that it will have 10 pixels added on to it every frame
@@ -155,12 +155,23 @@ class Fighter extends Sprite{
         
         setTimeout(() => {
             this.isAttacking = false
-        }, 100)
+        }, 1000)
+    }
+
+    takeHit(){
+        this.health -= 20
+        this.switchSprite('takeHitRight')
+        
     }
 
     switchSprite(sprite){
+
+        // overriding 
         if(this.image == this.sprites.attack1Right.image && this.frameCurrent < this.sprites.attack1Right.fm - 1)return
         if(this.image == this.sprites.attack1Left.image && this.frameCurrent < this.sprites.attack1Left.fm - 1)return
+
+        // override when fighter gets hit 
+        if(this.image == this.sprites.takeHitRight.image && this.frameCurrent < this.sprites.takeHitRight - 1) return
         switch(sprite) {
             case 'idle':
                 if(this.image !== this.sprites.idle.image)
@@ -168,7 +179,7 @@ class Fighter extends Sprite{
                     this.image = this.sprites.idle.image
                    // console.log(this.sprites.idle.fm)
                     this.fm = this.sprites.idle.fm
-                   this.frameCurrent = 0
+                    //this.frameCurrent = 0
                 
             break
             case 'idleLeft':
@@ -240,6 +251,13 @@ class Fighter extends Sprite{
                 if(this.image !== this.sprites.fallLeft.image){
                     this.image = this.sprites.fallLeft.image
                     this.fm = this.sprites.fallLeft.fm
+                    this.frameCurrent = 0
+                }
+            break
+            case 'takeHitRight':
+                if(this.image !== this.sprites.takeHitRight.image){
+                    this.image = this.sprites.takeHitRight.image
+                    this.fm = this.sprites.takeHitRight.fm
                     this.frameCurrent = 0
                 }
             break
