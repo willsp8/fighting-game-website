@@ -252,13 +252,22 @@ function animate(){
     // }
     
 
-    // this will change the direction of the attack box
+    // this will change the direction of the attack box for player
     if(player.lastKey == 'a' && player.isAttacking == true){
         console.log('mount')
         player.attackBox.offset.x = -80
     }else if(player.lastKey == 'd' && player.isAttacking == true){
         console.log('mount')
         player.attackBox.offset.x = 20
+    }
+
+    // this will change the direction of the attack box
+    if(enemy.lastKey == 'ArrowLeft' && enemy.isAttacking == true){
+        console.log('mount')
+        enemy.attackBox.offset.x = -80
+    }else if(enemy.lastKey == 'ArrowRight' && enemy.isAttacking == true){
+        console.log('mount')
+        enemy.attackBox.offset.x = 20
     }
 
 
@@ -365,14 +374,44 @@ function animate(){
     }
 
     //Enemy movement
+    
     enemy.velocity.x = 0
     if (keys.ArrowLeft.pressed && enemy.lastKey == 'ArrowLeft'){
+        
         enemy.velocity.x = -5
+        enemy.switchSprite('runLeft')
     }else if(keys.ArrowRight.pressed && enemy.lastKey == 'ArrowRight'){
         enemy.velocity.x = 5
+        enemy.switchSprite('runRight')
+    }else if(enemy.lastKey == 'ArrowLeft' ){
+            console.log('leftside')
+        // player.image = player.sprites.idleLeft.image
+        // player.fm = player.sprites.idleLeft.fm
+        enemy.switchSprite('idleLeft')
+    }else if( enemy.lastKey == 'ArrowRight' ){
+        enemy.switchSprite('idle')
     }
 
-    
+
+    // enemy jumping 
+    if(enemy.velocity.y < 0 && enemy.lastKey == 'ArrowRight'){
+        // player.image = player.sprites.jumpright.image
+        //player.fm = player.sprites.jumpright.fm
+        enemy.switchSprite('jumpRight')
+       // player.fm = player.sprites.jumpright.fm
+    }else if(enemy.velocity.y > 0 && enemy.lastKey == 'ArrowRight'){
+        // player.image = player.sprites.fall.image
+        // player.fm = player.sprites.fall.fm
+        enemy.switchSprite('fallRight')
+    }else if(enemy.velocity.y < 0 && enemy.lastKey == 'ArrowLeft'){
+        // enemy.image = player.sprites.jumpLeft.image
+        // player.fm = player.sprites.jumpLeft.fm
+        enemy.switchSprite('jumpLeft')
+    }else if(enemy.velocity.y > 0 && enemy.lastKey == 'ArrowLeft'){
+        // player.image = player.sprites.fallLeft.image
+        // player.fm = player.sprites.fallLeft.fm
+        enemy.switchSprite('fallLeft')
+    }
 
     //detect for collision for player 
     if( rechtangularCollision({
@@ -460,7 +499,7 @@ window.addEventListener('keydown', (event) => {
             break
         case 'ArrowDown':
             // 
-            enemy.isAttacking = true
+            enemy.attack()
             break
         case 'Shift':
             keys.shift.pressed = true 

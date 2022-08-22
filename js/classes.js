@@ -122,11 +122,11 @@ class Fighter extends Sprite{
         this.attackBox.position.x = this.position.x + this.attackBox.offset.x
         this.attackBox.position.y = this.position.y + this.attackBox.offset.y
         //collision box of the attack weapon
-        // c.fillRect(this.attackBox.position.x, this.attackBox.position.y, 
-        //     this.attackBox.width, this.attackBox.height)
-        // collision box of the player
-        // c.fillRect(this.position.x, this.position.y, 
-        //     this.width, this.height)
+        c.fillRect(this.attackBox.position.x, this.attackBox.position.y, 
+            this.attackBox.width, this.attackBox.height)
+        //collision box of the player
+        c.fillRect(this.position.x, this.position.y, 
+            this.width, this.height)
         this.position.x += this.velocity.x
         //this will move the object by how much we set the velocity for player and enemy on the y axis
         //or that it will have 10 pixels added on to it every frame
@@ -139,14 +139,14 @@ class Fighter extends Sprite{
            // this.position.y = 330
             // now this will add gravity and will stop if the places try to go out of bounds
         }else this.velocity.y += gravity
-        console.log(this.position.y)
+        //console.log(this.position.y)
     }
 
     attack(){
-        if(lastKey1 == 'd'){
+        if(lastKey1 == 'd' || lastKey1 == 'ArrowRight'){
             this.switchSprite('attack1Right') 
         }
-        if(lastKey1 == 'a'){
+        if(lastKey1 == 'a' || lastKey1 == 'ArrowLeft'){
             this.switchSprite('attack1Left') 
         }
         
@@ -274,12 +274,12 @@ window.addEventListener('keydown', (event) => {
         case 'ArrowRight':
             //when d is press it will move the Enemy on the x psotion by 1 pixel to the right 
             keys1.ArrowRight.pressed =true
-           // enemy.lastKey = 'ArrowRight'
+            lastKey1 = 'ArrowRight'
             break
         case 'ArrowLeft':
             //when a is press it will move the player on the x psotion by 1 pixel to the the left 
             keys1.ArrowLeft.pressed =true
-           // enemy.lastKey = 'ArrowLeft'
+            lastKey1 = 'ArrowLeft'
             break
             //this is for jump
         case 'ArrowUp':
@@ -287,7 +287,7 @@ window.addEventListener('keydown', (event) => {
             
             break
         case 'ArrowDown':
-            // 
+           // lastKey1 = 'ArrowDown'
             //enemy.isAttacking = true
             break
         case 'Shift':
