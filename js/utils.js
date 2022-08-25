@@ -9,6 +9,9 @@ function rechtangularCollision({rectangle1, rectangle2}) {
 }
 
 function rechtangularCollision2({rectangle1, rectangle2, posX, posY}) {
+    // console.log(rectangle2.position.x)
+    // console.log('now the player')
+    // console.log(rectangle1.position.x)
     return(
         rectangle1.position.x + rectangle1.width >= rectangle2.position.x + posX
         && rectangle1.position.x <= (rectangle2.position.x + posX) + rectangle2.width &&

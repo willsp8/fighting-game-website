@@ -110,7 +110,7 @@ class Fighter extends Sprite{
             sprites[sprite].image = new Image()
             sprites[sprite].image.src = sprites[sprite].imageSrc
         }
-        console.log(this.sprites)
+        //console.log(this.sprites)
     }
 
     
@@ -133,12 +133,18 @@ class Fighter extends Sprite{
         this.position.y += this.velocity.y
 
         //this basically checks if the player object is going byond the canvas in which it will stop once it reaches the border on the y axis
-        if(this.position.y + this.height + this.velocity.y >= canvas.height -50 ){
-            this.velocity.y = 0
-            this.position.y = 376
-           // this.position.y = 330
-            // now this will add gravity and will stop if the places try to go out of bounds
-        }else this.velocity.y += gravity
+        
+///important super important
+        // if(this.position.y + this.height + this.velocity.y >= canvas.height -50 ){
+        //     this.velocity.y = 0
+        // this.position.y = 375
+        //    // this.position.y = 330
+        //     // now this will add gravity and will stop if the places try to go out of bounds
+        // }else{
+        //     this.velocity.y += gravity  
+        // } 
+
+        this.velocity.y += gravity
         //console.log(this.position.y)
     }
 
@@ -155,10 +161,12 @@ class Fighter extends Sprite{
         
         setTimeout(() => {
             this.isAttacking = false
-        }, 1000)
+        }, 3000)
+
     }
 
     takeHit(){
+        
         this.health -= 20
         this.switchSprite('takeHitRight')
         
@@ -167,7 +175,7 @@ class Fighter extends Sprite{
     switchSprite(sprite){
 
         // overriding 
-        if(this.image == this.sprites.attack1Right.image && this.frameCurrent < this.sprites.attack1Right.fm - 1)return
+        if(this.image == this.sprites.attack1Right.image && this.frameCurrent < this.sprites.attack1Right.fm - 1){ console.log('whats'); return}
         if(this.image == this.sprites.attack1Left.image && this.frameCurrent < this.sprites.attack1Left.fm - 1)return
 
         // override when fighter gets hit 
@@ -262,6 +270,24 @@ class Fighter extends Sprite{
                 }
             break
         }
+    }
+}
+
+class Boundary{
+    static width = 32
+    static height = 32
+    constructor({position}) {
+        this.position = position
+        this.width = 32
+        this.height = 32
+    }
+    //draws boundary onto the screen
+    draw() {
+        // un comment if you want to see red blocks
+        c.fillStyle = 'rgba(255, 0, 0, .5)'
+        //c.fillStyle = 'rgba(0, 0, 0, 0)'
+        c.fillRect(this.position.x, this.position.y, this.width, this.height) 
+        
     }
 }
 
