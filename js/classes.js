@@ -71,7 +71,7 @@ class Sprite {
 
     
 }
-
+let timers = 0
 class Fighter extends Sprite{
     //note we cannot pass postion second and velocity first we will get errors so  the postion and velocity as one argument
     constructor({position, velocity, color = 'red', imageSrc, scale = 1, fm = 1, offset= {x: 0, y: 0}, sprites,
@@ -86,7 +86,7 @@ class Fighter extends Sprite{
         
         this.velocity = velocity
         this.width = 50
-        this.height = 150
+        this.height = 120
         this.lastKey
         this.attackBox = {
             position: {
@@ -105,6 +105,7 @@ class Fighter extends Sprite{
         this.framesElapsed = 0
         this.framesHold = 5
         this.sprites = sprites
+        this.dead = false
 
         for(const sprite in this.sprites){
             sprites[sprite].image = new Image()
@@ -118,15 +119,18 @@ class Fighter extends Sprite{
     //this will basically 
     update(){
         this.draw()
-        this.animateFrames()
+        if(!this.dead){
+            this.animateFrames()
+        }
+        
         this.attackBox.position.x = this.position.x + this.attackBox.offset.x
         this.attackBox.position.y = this.position.y + this.attackBox.offset.y
         //collision box of the attack weapon
-        c.fillRect(this.attackBox.position.x, this.attackBox.position.y, 
-            this.attackBox.width, this.attackBox.height)
-        //collision box of the player
-        c.fillRect(this.position.x, this.position.y, 
-            this.width, this.height)
+        // c.fillRect(this.attackBox.position.x, this.attackBox.position.y, 
+        //     this.attackBox.width, this.attackBox.height)
+        // //collision box of the player
+        // c.fillRect(this.position.x, this.position.y, 
+        //     this.width, this.height)
         this.position.x += this.velocity.x
         //this will move the object by how much we set the velocity for player and enemy on the y axis
         //or that it will have 10 pixels added on to it every frame
@@ -158,28 +162,66 @@ class Fighter extends Sprite{
         
         this.isAttacking = true
     
-        
+        timers = 0
         setTimeout(() => {
+            
             this.isAttacking = false
-        }, 3000)
+        }, 500)
 
     }
 
     takeHit(){
         
         this.health -= 20
-        this.switchSprite('takeHitRight')
+        
+        console.log(this.health)
+        if(this.health <= 0 ){
+            this.switchSprite('death') 
+            console.log('help')
+           // this.switchSprite('death')
+        }else{
+            if(lastKey1 == 'd' || lastKey1 == 'ArrowRight'){
+                console.log('old')
+                this.switchSprite('takeHitLeft') 
+            }
+            if(lastKey1 == 'a' || lastKey1 == 'ArrowLeft'){
+                console.log('old2')
+                
+                this.switchSprite('takeHitRight')
+            }
+        }
+        
         
     }
-
+    
     switchSprite(sprite){
-
+        
+        if(this.image == this.sprites.death.image){
+            console.log('dead')
+            if(this.frameCurrent === this.sprites.death.fm - 1){
+                this.dead = true
+            }
+            
+            return
+        }
         // overriding 
         if(this.image == this.sprites.attack1Right.image && this.frameCurrent < this.sprites.attack1Right.fm - 1){ console.log('whats'); return}
         if(this.image == this.sprites.attack1Left.image && this.frameCurrent < this.sprites.attack1Left.fm - 1)return
 
         // override when fighter gets hit 
-        if(this.image == this.sprites.takeHitRight.image && this.frameCurrent < this.sprites.takeHitRight - 1) return
+       
+        if(this.image == this.sprites.takeHitRight.image && timers < 40){ 
+            console.log('my goodness')
+            console.log(timers)
+            timers += 1 
+            return}
+
+        if(this.image == this.sprites.takeHitLeft.image && timers < 40){ 
+            console.log('my goodness')
+            console.log(timers)
+            timers += 1 
+            return}    
+        //timers = 
         switch(sprite) {
             case 'idle':
                 if(this.image !== this.sprites.idle.image)
@@ -266,6 +308,20 @@ class Fighter extends Sprite{
                 if(this.image !== this.sprites.takeHitRight.image){
                     this.image = this.sprites.takeHitRight.image
                     this.fm = this.sprites.takeHitRight.fm
+                    this.frameCurrent = 0
+                }
+            break
+            case 'takeHitLeft':
+                if(this.image !== this.sprites.takeHitLeft.image){
+                    this.image = this.sprites.takeHitLeft.image
+                    this.fm = this.sprites.takeHitLeft.fm
+                    this.frameCurrent = 0
+                }
+            break
+            case 'death':
+                if(this.image !== this.sprites.death.image){
+                    this.image = this.sprites.death.image
+                    this.fm = this.sprites.death.fm
                     this.frameCurrent = 0
                 }
             break

@@ -106,7 +106,7 @@ const player = new Fighter({
 
     offset: {
         x: 160,
-        y: 80
+        y: 110
     },
     sprites: {
         idle:{
@@ -150,8 +150,16 @@ const player = new Fighter({
             fm: 7
         }, 
         takeHitRight: {
-            imageSrc: './res/player/Take Hit.png',
+            imageSrc: './res/player/TakeHit.png',
             fm: 4
+        },
+        takeHitLeft: {
+            imageSrc: './res/player/Take HitLeft.png',
+            fm: 4
+        }, 
+        death: {
+            imageSrc: './res/player/Death.png',
+            fm: 11
         }
 
     },
@@ -181,7 +189,7 @@ const enemy = new Fighter({
     imageSrc: './res/player/Idle.png',
     offset: {
         x: 160,
-        y: 80
+        y: 110
     },
     color:  'blue',
     fm: 11, 
@@ -229,8 +237,16 @@ const enemy = new Fighter({
             fm: 7
         }, 
         takeHitRight: {
-            imageSrc: './res/player/Take Hit.png',
+            imageSrc: './res/player/TakeHit.png',
             fm: 4
+        },
+        takeHitLeft: {
+            imageSrc: './res/player/Take HitLeft.png',
+            fm: 4
+        }, 
+        death: {
+            imageSrc: './res/player/Death.png',
+            fm: 11
         }
 
     },
@@ -290,6 +306,8 @@ let jumps = 0
 let jumpsMax = 10
 let jumpsEnemy = 0
 let jumpsMaxEnemy = 10
+let time = 0 
+let timeMax = 0
 let noLongerFall = true
 //animation loop 
 const movables = [...boundaries, ...boundaries2 ]
@@ -350,7 +368,7 @@ function animate(){
             enemy.velocity.y =  0
             movingYEnemy = false
             keys.ArrowUp.pressed == false
-            console.log(player.velocity.x)
+           // console.log(player.velocity.x)
             //moving = false
             
         }else if(
@@ -368,7 +386,7 @@ function animate(){
             
             
             jumpsEnemy = 0
-            console.log('okay enemy')
+            //console.log('okay enemy')
             enemy.velocity.y +=  5
             //  player.position.y -= 4
             //movingY = false
@@ -417,7 +435,7 @@ function animate(){
            
             console.log(player.velocity.x)
            jumps = 0
-           console.log('okay')
+           //console.log('okay')
             player.velocity.y +=  5
             //  player.position.y -= 4
             //movingY = false
@@ -505,7 +523,7 @@ function animate(){
         ){  
             // player.image = player.sprites.runRight.image
             // player.fm = player.sprites.runRight.fm
-            console.log('runright is ')
+            //console.log('runright is ')
             player.switchSprite('runRight')
             player.attackBox.position.x = -10
             player.velocity.x = 5
@@ -538,7 +556,7 @@ function animate(){
         }
 
         if(moving == true){
-            console.log('runright is ')
+            //console.log('runright is ')
             player.switchSprite('runRight')
             player.attackBox.position.x = -10
             player.velocity.x = 5
@@ -586,7 +604,9 @@ function animate(){
         // than move the
         if(moving == true){
             player.velocity.x = 0
+            
             enemy.position.x -= 5
+            
             shop.position.x -= 5 
             background_houses.position.x -= 5 
             movables.forEach((movable) => {
@@ -614,7 +634,7 @@ function animate(){
                     posY: 0
                 })
             ){
-                console.log('nice')
+                //console.log('nice')
                 
                 player.velocity.x =  0
                 moving = false
@@ -625,6 +645,7 @@ function animate(){
         
         if(moving == true){
             player.velocity.x = 0
+            
             enemy.position.x += 5
             shop.position.x += 5 
             background_houses.position.x += 5 
@@ -640,10 +661,10 @@ function animate(){
     if(player.velocity.y < 0 && player.lastKey == 'd' ){
         
         player.switchSprite('jumpRight')       
-       noLongerFall = false
+        noLongerFall = false
     }else if(player.velocity.y > 0 && player.lastKey == 'd' ){
         
-        console.log(player.position.y)
+        //console.log(player.position.y)
         player.switchSprite('fallRight')
          
     }else if(player.velocity.y < 0 && player.lastKey == 'a' ){
@@ -651,12 +672,12 @@ function animate(){
         player.switchSprite('jumpLeft')
         
     }else if(player.velocity.y > 0 && player.lastKey == 'a' && noLongerFall == false){
-       console.log('statel')
+       
         player.switchSprite('fallLeft')
     }
-    console.log()
+    
     if(player.position.y > 350  && movingY == true){
-        console.log('tea')
+        //console.log('tea')
         for (let i = 0; i < boundaries2.length; i++){
             const boundary = boundaries2[i]
             
@@ -692,6 +713,7 @@ function animate(){
             player.switchSprite('fallRight')
             player.velocity.y = 0
             enemy.position.y -= 10
+            
             shop.position.y -= 10
             background_houses.position.y -= 10
             movables.forEach((movable) => {
@@ -729,7 +751,7 @@ function animate(){
             }) 
     }else if(keys.w.pressed == true && numOfPressed > 3){
         numOfPressed = 0
-        console.log(numOfPressed)
+        //console.log(numOfPressed)
     }
 
     if(keys.ArrowUp.pressed == true && jumpsEnemy > 0){
@@ -875,6 +897,9 @@ function animate(){
         // player.fm = player.sprites.fallLeft.fm
         enemy.switchSprite('fallLeft')
     }
+
+    
+
    // console.log(player.isAttacking)
     //detect for collision for player also this is where you can change sprites for being hit 
     if( rechtangularCollision({
@@ -884,25 +909,34 @@ function animate(){
         player.isAttacking 
         
         ){
-            //console.log('stop')
-            enemy.takeHit()
-            // find a way to switch back to the sprite
             
-            player.isAttacking = false
+           // enemy.takeHit()
+            // find a way to switch back to the sprite
+               
+                
+                enemy.takeHit()
+                player.isAttacking = false  
+            // }, 8000)
             
             
             //this is a clue on how to store js info into html into python into sql
-            //enemy.health -= 20
+            
             document.querySelector('#enemyHealth').style.width = enemy.health + '%'
             //console.log('go')
     }
 
-    // if player misses 
-    // if(player.isAttacking && player.frameCurrent === 3){
+    // if(player.isAttacking && player.frameCurrent == 0){
     //     player.isAttacking = false
     // }
-    //detect for collision for enemy
+    // if player misses 
     
+    //detect for collision for enemy
+    if(enemy.health <= 0){
+        enemy.switchSprite('death')
+    }
+    if(player.health <= 0){
+        player.switchSprite('death')
+    }
     if( rechtangularCollision({
         rectangle1: enemy,
         rectangle2: player
@@ -912,7 +946,7 @@ function animate(){
         player.takeHit()
         enemy.isAttacking = false  
        
-        //player.health -= 20
+        
         document.querySelector('#playerHealth').style.width = player.health + '%' 
         console.log('enemy attack worked')
     }
@@ -936,52 +970,62 @@ animate()
 //this method will listen to anything that is typed onto the keyboard and mouse
 window.addEventListener('keydown', (event) => {
     // this will check we pressed a w s d keys 
-    switch (event.key){
-        case 'd':
-            //when d is press it will move the player on the x psotion by 1 pixel to the right 
-            keys.d.pressed =true
-            player.lastKey = 'd'
-            break
-        case 'a':
-            //when a is press it will move the player on the x psotion by 1 pixel to the the left 
-            keys.a.pressed =true
-            player.lastKey = 'a'
-            break
-            //this is for jump
-        case 'w':
-            //when a is press it will move the player on the x psotion by 1 pixel to the the left 
-           // numOfPressed = numOfPressed + 1
-            keys.w.pressed =true
-            //keys.w.pressed == false
+    if(!player.dead){
+        switch (event.key){
+            case 'd':
+                //when d is press it will move the player on the x psotion by 1 pixel to the right 
+                keys.d.pressed =true
+                player.lastKey = 'd'
+                break
+            case 'a':
+                //when a is press it will move the player on the x psotion by 1 pixel to the the left 
+                keys.a.pressed =true
+                player.lastKey = 'a'
+                break
+                //this is for jump
+            case 'w':
+                //when a is press it will move the player on the x psotion by 1 pixel to the the left 
+               // numOfPressed = numOfPressed + 1
+                keys.w.pressed =true
+                //keys.w.pressed == false
+    
+                break
+            case ' ':
+                player.attack()
+                break
+            
+        }
+    }
+    
+    if(!enemy.dead){
 
-            break
-        case ' ':
-            player.attack()
-            break
-        case 'ArrowRight':
-            //when d is press it will move the Enemy on the x psotion by 1 pixel to the right 
-            keys.ArrowRight.pressed =true
-            enemy.lastKey = 'ArrowRight'
-            break
-        case 'ArrowLeft':
-            //when a is press it will move the player on the x psotion by 1 pixel to the the left 
-            keys.ArrowLeft.pressed =true
-            enemy.lastKey = 'ArrowLeft'
-            break
-            //this is for jump
-        case 'ArrowUp':
-            //when a is press it will move the player on the x psotion by 1 pixel to the the left 
-            //enemy.velocity.y = -20
-            keys.ArrowUp.pressed = true
-            break
-        case 'ArrowDown':
-            // 
-            enemy.attack()
-            break
-        case 'Shift':
-            keys.shift.pressed = true 
-            //timespressed = 0
-            break
+    
+        switch(event.key){
+            case 'ArrowRight':
+                //when d is press it will move the Enemy on the x psotion by 1 pixel to the right 
+                keys.ArrowRight.pressed =true
+                enemy.lastKey = 'ArrowRight'
+                break
+            case 'ArrowLeft':
+                //when a is press it will move the player on the x psotion by 1 pixel to the the left 
+                keys.ArrowLeft.pressed =true
+                enemy.lastKey = 'ArrowLeft'
+                break
+                //this is for jump
+            case 'ArrowUp':
+                //when a is press it will move the player on the x psotion by 1 pixel to the the left 
+                //enemy.velocity.y = -20
+                keys.ArrowUp.pressed = true
+                break
+            case 'ArrowDown':
+                // 
+                enemy.attack()
+                break
+            case 'Shift':
+                keys.shift.pressed = true 
+                //timespressed = 0
+                break
+        }
     }
     //console.log(event.key)
 })
