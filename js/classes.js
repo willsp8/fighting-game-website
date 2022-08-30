@@ -153,14 +153,27 @@ class Fighter extends Sprite{
         //console.log(this.position.y)
     }
 
-    attack(lastKey1){
-        
-        if(lastKey == 'd' || lastKey1 == 'ArrrowRight' ){
+    attack(lastKey, R, L, P, E){
+       
+        if(R == true && E == true){
             this.switchSprite('attack1Right') 
-        }
-        if(lastKey == 'a' ||  lastKey1 == 'ArrowLeft'){
+        }else if(L == true && E == true){
+            console.log('switch')
             this.switchSprite('attack1Left') 
         }
+        if(lastKey == 'd' && P == true){
+            this.switchSprite('attack1Right') 
+        }else if(lastKey == 'a' && P == true){
+            this.switchSprite('attack1Left') 
+        }
+        // console.log(angle)
+        // if(angle < 1.5 && angle > -1.5  ){
+        //     console.log('pop left ')
+        //     this.switchSprite('attack1Left') 
+        // }else if(angle > 1.5 && angle < 3.4 ){
+        //     console.log('pop right ')
+        //     this.switchSprite('attack1rRight') 
+        // }
         
         this.isAttacking = true
     
