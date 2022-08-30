@@ -88,6 +88,8 @@ const shop = new Sprite({
 
 })
 
+
+
 // this is where we are going to place our character
 // also this is an player object
 const player = new Fighter({
@@ -176,6 +178,14 @@ const player = new Fighter({
 //tells javascript to draw the player object
 player.draw()
 
+const enemyArea = new BoundaryArea({
+    position: {
+        x: 170,
+        y: 300
+    }
+
+})
+
 //basically enemeny is equal to new sprite class in
 const enemy = new Fighter({
     position: {
@@ -260,7 +270,7 @@ const enemy = new Fighter({
     }
 })
 
-const testBoundary = new Boundary({
+const startingPoint = new Boundary({
     position: {
         x: 400,
         y: 400
@@ -309,8 +319,13 @@ let jumpsMaxEnemy = 10
 let time = 0 
 let timeMax = 0
 let noLongerFall = true
+let attack = false
+let ALC = 0
+let walkRight = false
+let walkLeft = false
+let ALCAttack = 0
 //animation loop 
-const movables = [...boundaries, ...boundaries2 ]
+const movables = [...boundaries, ...boundaries2, startingPoint ]
 function animate(){
     //player.isAttacking = false
     //this will keep calling the animate function like a for loop/ infite loop until we tell it to stop
@@ -331,6 +346,7 @@ function animate(){
     player.update()
     enemy.update()
    // testBoundary.draw()
+   startingPoint.draw()
     boundaries.forEach((boundary) => {
         boundary.draw()
     })
@@ -338,13 +354,13 @@ function animate(){
     boundaries2.forEach((boundary) => {
         boundary.draw()
     })
-    
+    enemyArea .draw()
     // player movement
     player.velocity.x = 0
     
    
     // this will change the direction of the attack box for player
-    
+    //for enemy collision for walls
     for (let i = 0; i < boundaries2.length; i++){
         const boundary = boundaries2[i]
         
@@ -366,6 +382,7 @@ function animate(){
             //console.log('standing on block')
             jumpsEnemy = jumpsMaxEnemy
             enemy.velocity.y =  0
+           
             movingYEnemy = false
             keys.ArrowUp.pressed == false
            // console.log(player.velocity.x)
@@ -386,8 +403,9 @@ function animate(){
             
             
             jumpsEnemy = 0
-            //console.log('okay enemy')
+            console.log('okay enemy')
             enemy.velocity.y +=  5
+           
             //  player.position.y -= 4
             //movingY = false
             keys.ArrowUp.pressed == false
@@ -397,6 +415,7 @@ function animate(){
         }
     }
 
+    //for player collision for ceiling
     for (let i = 0; i < boundaries2.length; i++){
         const boundary = boundaries2[i]
         
@@ -417,7 +436,7 @@ function animate(){
             player.velocity.y =  0
             movingY = false
             keys.w.pressed == false
-            console.log(player.velocity.x)
+            //console.log(player.velocity.x)
             //moving = false
             
         }else if(
@@ -433,7 +452,7 @@ function animate(){
             })
         ){
            
-            console.log(player.velocity.x)
+            //console.log(player.velocity.x)
            jumps = 0
            //console.log('okay')
             player.velocity.y +=  5
@@ -446,23 +465,24 @@ function animate(){
         }
     }
 
+    // player movement and wall collisions
     if (keys.a.pressed && player.lastKey == 'a' && moving == true){
         
         if(rechtangularCollision2({
             rectangle1: player,
             rectangle2: enemy,
-            posX: 5,
+            posX: 20,
             posY: 0
         })){
     
             console.log('collide')
             //player.velocity.x =  +6
-           // moving = false
+            moving = false
         }else if(
             rechtangularCollision2({
                 rectangle1: player,
                 rectangle2: enemy,
-                posX: 5,
+                posX: 20,
                 posY: 0
             }) == false 
         ){  
@@ -506,18 +526,18 @@ function animate(){
         if(rechtangularCollision2({
             rectangle1: player,
             rectangle2: enemy,
-            posX: -5,
+            posX: -20,
             posY: 0
         })){
     
-            console.log('collide')
+            console.log('collffffide')
             //player.velocity.x =  -6
-           // moving = false
+           moving = false
         }else if(
             rechtangularCollision2({
                 rectangle1: player,
                 rectangle2: enemy,
-                posX: -5,
+                posX: -20,
                 posY: 0
             }) == false 
         ){  
@@ -530,7 +550,7 @@ function animate(){
             
         }
         
-
+        console.log(player.lastKey)
         for (let i = 0; i < boundaries.length; i++){
             const boundary = boundaries[i]
             
@@ -575,9 +595,9 @@ function animate(){
         
     }
     
-    
+    // camera movement for player
     if(keys.d.pressed && player.position.x > 600){
-        console.log('player is moving')
+      //  console.log('player is moving')
         for (let i = 0; i < boundaries.length; i++){
             const boundary = boundaries[i]
             
@@ -608,6 +628,7 @@ function animate(){
             enemy.position.x -= 5
             
             shop.position.x -= 5 
+            enemyArea.position.x -= 5
             background_houses.position.x -= 5 
             movables.forEach((movable) => {
                             
@@ -648,6 +669,7 @@ function animate(){
             
             enemy.position.x += 5
             shop.position.x += 5 
+            enemyArea.position.x += 5
             background_houses.position.x += 5 
             movables.forEach((movable) => {
                         
@@ -658,6 +680,8 @@ function animate(){
         
     }
     
+
+    // changing sprites when jumping and falling for player
     if(player.velocity.y < 0 && player.lastKey == 'd' ){
         
         player.switchSprite('jumpRight')       
@@ -676,6 +700,8 @@ function animate(){
         player.switchSprite('fallLeft')
     }
     
+
+    // player ceiling collisions
     if(player.position.y > 350  && movingY == true){
         //console.log('tea')
         for (let i = 0; i < boundaries2.length; i++){
@@ -699,7 +725,7 @@ function animate(){
                 //console.log('standing on block')
                 
                 jumps = jumps - 1
-               console.log('okay')
+                console.log('okay')
                 player.velocity.y +=  10
                 //  player.position.y -= 4
                 //movingY = false
@@ -713,7 +739,7 @@ function animate(){
             player.switchSprite('fallRight')
             player.velocity.y = 0
             enemy.position.y -= 10
-            
+            enemyArea.position.y -= 10
             shop.position.y -= 10
             background_houses.position.y -= 10
             movables.forEach((movable) => {
@@ -726,6 +752,7 @@ function animate(){
             player.switchSprite('fallLeft')
             player.velocity.y = 0
             enemy.position.y -= 10
+            enemyArea.position.y -= 10
             shop.position.y -= 10
             background_houses.position.y -= 10
             movables.forEach((movable) => {
@@ -735,6 +762,7 @@ function animate(){
             }) 
         } 
     }
+    // player ceiling collisions
     if(keys.w.pressed == true && jumps > 0){
         jumps = jumps - 1
         player.velocity.y = -10
@@ -743,6 +771,7 @@ function animate(){
        
             enemy.position.y += 10
             shop.position.y += 10
+            enemyArea.position.y += 10
             background_houses.position.y += 10
             movables.forEach((movable) => {
                         
@@ -778,28 +807,245 @@ function animate(){
 
 
 
-    // make floor
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       
-    
+    // all the enmy stfff
 
     // use this for when you collide with something thats not a player
     if(rechtangularCollision2({
         rectangle1: player,
         rectangle2: enemy,
         posX: 0,
-        posY: -7
+        posY: -40
     })){
-       // console.log('doblue')
+        console.log('doblue')
         // use this for when you collide with something thats not a player
         player.switchSprite('idle')
-        player.velocity.y =  0
+       // player.velocity.y =  0
+        if(player.lastKey == 'd'){
+            player.velocity.x =  12
+        }else if(player.lastKey == 'a'){
+            player.velocity.x =  -12
+        }
+
+    
+
+        
         //player.switchSprite()
         // use when you collide with a player
     }
 
     //Enemy movement
     
+    const angle = Math.atan2(player.position.y - enemy.position.y, player.position.x - enemy.position.x )
+    const angleStartingpoint = Math.atan2(startingPoint.position.y - enemy.position.y, startingPoint.position.x - enemy.position.x )
     enemy.velocity.x = 0
+    
+    if(rechtangularCollision2({
+        rectangle1: player,
+        rectangle2: enemyArea,
+        posX: 0,
+        posY: 0
+    }) && enemy.dead == false){
+       
+        
+        //console.log('you are in')
+       // console.log(angle)
+        if(rechtangularCollision2({
+            rectangle1: player,
+            rectangle2: enemy,
+            posX: 60,
+            posY: 0
+        }) == false && rechtangularCollision2({
+            rectangle1: player,
+            rectangle2: enemy,
+            posX: -60,
+            posY: 0
+        }) == false){
+            
+            if(movingEnemy == true && angle < 1.5 && angle > -1.5 ){
+                //if(angle == 0)
+                enemy.switchSprite('runRight')
+                enemy.attackBox.position.x += 3
+                enemy.velocity.x += 3
+                enemyArea.position.x += 3
+            }
+            if(movingEnemy == true && angle > 1.5 && angle < 3.4 ){
+                //if(angle == 0)
+                enemy.switchSprite('runLeft')
+                enemy.attackBox.position.x -= 3
+                enemy.velocity.x -= 3
+                enemyArea.position.x -= 3
+            }
+        }else if(rechtangularCollision2({
+            rectangle1: player,
+            rectangle2: enemy,
+            posX: 60,
+            posY: 0
+        }) || rechtangularCollision2({
+            rectangle1: player,
+            rectangle2: enemy,
+            posX: -60,
+            posY: 0
+        })){
+              // if(enemy.dead == true) {return}
+                if(rechtangularCollision2({
+                    rectangle1: player,
+                    rectangle2: enemy,
+                    posX: -40,
+                    posY: 0
+                })){
+                    enemy.attackBox.position.x += 1
+                    enemy.velocity.x += 1
+                    enemyArea.position.x += 1
+                }
+                if(rechtangularCollision2({
+                    rectangle1: player,
+                    rectangle2: enemy,
+                    posX: 40,
+                    posY: 0
+                })){
+                    enemy.attackBox.position.x -= 1
+                    enemy.velocity.x -= 1
+                    enemyArea.position.x -= 1
+                }
+                ALCAttack += 1
+               // console.log(ALCAttack)
+                if(angle < 1.5 && angle > -1.5 ){
+                    if(ALCAttack == 50) {
+                        console.log('bear')
+                        lastKey1 = 'ArrowRight'
+                        enemy.attack(lastKey1)
+                        player.takeHit(20)
+                        document.querySelector('#playerHealth').style.width = player.health + '%'
+                        ALCAttack = 0
+                    }else{
+                        enemy.switchSprite('idle')
+                    }
+                }
+
+                if(angle > 1.5 && angle < 3.4){
+                    if(ALCAttack == 50) {
+                        console.log('bear')
+                        lastKey1 = 'ArrowLeft'
+                        enemy.attack(lastKey1)
+                        player.takeHit(20)
+                        document.querySelector('#playerHealth').style.width = player.health + '%'
+                        ALCAttack = 0
+                    }else{
+                        enemy.switchSprite('idleLeft')
+                    }
+                }
+                
+               // console.log(ALCAttack)
+            
+        }
+
+        
+        
+        
+        
+    }else if (rechtangularCollision2({
+        rectangle1: enemy,
+        rectangle2: startingPoint,
+        posX: 0,
+        posY: 0
+    }) == false && enemy.dead == false){
+        if(angleStartingpoint < 1.5 && angleStartingpoint > -1.5 ){
+            enemy.switchSprite('runLeft')
+            enemy.attackBox.position.x -= angleStartingpoint
+            enemy.position.x -= angleStartingpoint
+        
+            enemyArea.position.x -= angleStartingpoint
+        }
+        if(angleStartingpoint > 1.5 && angleStartingpoint < 3.4){
+            enemy.switchSprite('runLeft')
+            enemy.attackBox.position.x += -angleStartingpoint
+            enemy.position.x += -angleStartingpoint
+        
+            enemyArea.position.x += -angleStartingpoint
+        }
+        
+    }else{
+        
+        enemy.switchSprite('idleLeft')
+        // for the creator walking 
+        // console.log('lets')
+        // enemy.switchSprite('idleLeft')
+        ALC += 1
+        if(ALC <= 100){
+           
+            
+            enemy.switchSprite('idleLeft')
+            
+        }else if(ALC > 200 && ALC < 300){
+           enemy.switchSprite('idle')
+            
+        }else if(ALC == 300){
+            ALC = 0
+        }
+        
+        // ALC += 1
+        // if(ALC <= 100){
+        //     walkLeft = true
+        //     walkRight = false
+            
+        //     console.log('changeDirRight')
+            
+        // }else if(ALC > 200 && ALC < 300){
+        //     console.log(ALC)
+        //     walkRight = true
+        //     walkLeft = false
+           
+        //     console.log('changeDirRight')
+            
+        // }else if(ALC == 300){
+        //     ALC = 0
+        // }
+        // console.log(ALC)
+        // if(walkLeft == true){
+        //     enemy.switchSprite('runRight')
+        //     enemy.attackBox.position.x += 1
+        //     enemy.position.x += 1
+            
+        //     enemyArea.position.x += 1
+            
+        // }
+        // if(walkRight == true){
+        //     enemy.switchSprite('runLeft')
+        //     enemy.attackBox.position.x -= 1
+        //     enemy.position.x -= 1
+            
+        //     enemyArea.position.x -= 1
+        // }
+        
+        
+    }
+
+    if(enemy.health <= 0){
+        enemy.switchSprite('death')
+        enemy.position.x = enemy.position.x
+    }
+
+    if(player.health <= 0){
+        player.switchSprite('death')
+    }
+
     if (keys.ArrowLeft.pressed && enemy.lastKey == 'ArrowLeft'){
         for (let i = 0; i < boundaries.length; i++){
             const boundary = boundaries[i]
@@ -830,7 +1076,7 @@ function animate(){
             enemy.switchSprite('runLeft')
             enemy.attackBox.position.x = -10
             enemy.velocity.x = -5
-        
+            enemyArea.position.x -= 5
         }
         
         
@@ -864,6 +1110,7 @@ function animate(){
             enemy.switchSprite('runRight')
             enemy.attackBox.position.x = 10
             enemy.velocity.x = 5
+            enemyArea.position.x += 5
         
         }
         
@@ -875,6 +1122,8 @@ function animate(){
     }else if( enemy.lastKey == 'ArrowRight' ){
         enemy.switchSprite('idle')
     }
+    
+    
 
 
     // enemy jumping 
@@ -914,7 +1163,7 @@ function animate(){
             // find a way to switch back to the sprite
                
                 
-                enemy.takeHit()
+                enemy.takeHit(20)
                 player.isAttacking = false  
             // }, 8000)
             
@@ -931,25 +1180,20 @@ function animate(){
     // if player misses 
     
     //detect for collision for enemy
-    if(enemy.health <= 0){
-        enemy.switchSprite('death')
-    }
-    if(player.health <= 0){
-        player.switchSprite('death')
-    }
-    if( rechtangularCollision({
-        rectangle1: enemy,
-        rectangle2: player
-    }) && 
-    enemy.isAttacking
-    ){
-        player.takeHit()
-        enemy.isAttacking = false  
+   
+    // if( rechtangularCollision({
+    //     rectangle1: enemy,
+    //     rectangle2: player
+    // }) && 
+    // enemy.isAttacking
+    // ){
+    //     player.takeHit(.5)
+    //     enemy.isAttacking = false  
        
         
-        document.querySelector('#playerHealth').style.width = player.health + '%' 
-        console.log('enemy attack worked')
-    }
+    //     document.querySelector('#playerHealth').style.width = player.health + '%' 
+    //     console.log('enemy attack worked')
+    // }
 
     if(enemy.isAttacking && enemy.frameCurrent == 0){
         enemy.isAttacking = false
@@ -991,7 +1235,7 @@ window.addEventListener('keydown', (event) => {
     
                 break
             case ' ':
-                player.attack()
+                player.attack(player.lastKey)
                 break
             
         }
@@ -1019,7 +1263,7 @@ window.addEventListener('keydown', (event) => {
                 break
             case 'ArrowDown':
                 // 
-                enemy.attack()
+                enemy.attack(lastKey1)
                 break
             case 'Shift':
                 keys.shift.pressed = true 

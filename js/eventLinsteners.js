@@ -39,11 +39,13 @@ window.addEventListener('keydown', (event) => {
             //when d is press it will move the Enemy on the x psotion by 1 pixel to the right 
             keys.ArrowRight.pressed =true
             enemy.lastKey = 'ArrowRight'
+            enemy.lastKey1 = 'ArrowRight'
             break
         case 'ArrowLeft':
             //when a is press it will move the player on the x psotion by 1 pixel to the the left 
             keys.ArrowLeft.pressed =true
             enemy.lastKey = 'ArrowLeft'
+            enemy.lastKey1 = 'ArrowLeft'
             break
             //this is for jump
         case 'ArrowUp':

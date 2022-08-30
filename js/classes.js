@@ -88,6 +88,7 @@ class Fighter extends Sprite{
         this.width = 50
         this.height = 120
         this.lastKey
+        
         this.attackBox = {
             position: {
                 x: this.position.x,
@@ -152,11 +153,12 @@ class Fighter extends Sprite{
         //console.log(this.position.y)
     }
 
-    attack(){
-        if(lastKey1 == 'd' || lastKey1 == 'ArrowRight'){
+    attack(lastKey1){
+        
+        if(lastKey == 'd' || lastKey1 == 'ArrrowRight' ){
             this.switchSprite('attack1Right') 
         }
-        if(lastKey1 == 'a' || lastKey1 == 'ArrowLeft'){
+        if(lastKey == 'a' ||  lastKey1 == 'ArrowLeft'){
             this.switchSprite('attack1Left') 
         }
         
@@ -170,21 +172,22 @@ class Fighter extends Sprite{
 
     }
 
-    takeHit(){
+    takeHit(damage, lastKey1){
         
-        this.health -= 20
+        this.health -= damage
         
         console.log(this.health)
         if(this.health <= 0 ){
+            this.position.x = this.position.x
             this.switchSprite('death') 
             console.log('help')
            // this.switchSprite('death')
         }else{
-            if(lastKey1 == 'd' || lastKey1 == 'ArrowRight'){
+            if(this.lastKey == 'd' || lastKey1 == 'ArrowRight'){
                 console.log('old')
                 this.switchSprite('takeHitLeft') 
             }
-            if(lastKey1 == 'a' || lastKey1 == 'ArrowLeft'){
+            if(this.lastKey == 'a' || lastKey1 == 'ArrowLeft'){
                 console.log('old2')
                 
                 this.switchSprite('takeHitRight')
@@ -197,7 +200,7 @@ class Fighter extends Sprite{
     switchSprite(sprite){
         
         if(this.image == this.sprites.death.image){
-            console.log('dead')
+            
             if(this.frameCurrent === this.sprites.death.fm - 1){
                 this.dead = true
             }
@@ -210,13 +213,13 @@ class Fighter extends Sprite{
 
         // override when fighter gets hit 
        
-        if(this.image == this.sprites.takeHitRight.image && timers < 40){ 
+        if(this.image == this.sprites.takeHitRight.image && timers < 20){ 
             console.log('my goodness')
-            console.log(timers)
+           // console.log(timers)
             timers += 1 
             return}
 
-        if(this.image == this.sprites.takeHitLeft.image && timers < 40){ 
+        if(this.image == this.sprites.takeHitLeft.image && timers < 20){ 
             console.log('my goodness')
             console.log(timers)
             timers += 1 
@@ -320,6 +323,7 @@ class Fighter extends Sprite{
             break
             case 'death':
                 if(this.image !== this.sprites.death.image){
+                    
                     this.image = this.sprites.death.image
                     this.fm = this.sprites.death.fm
                     this.frameCurrent = 0
@@ -347,6 +351,24 @@ class Boundary{
     }
 }
 
+class BoundaryArea{
+    static width = 256 * 2
+    static height = 256
+    constructor({position}) {
+        this.position = position
+        this.width = 256 * 2
+        this.height = 256 
+    }
+    //draws boundary onto the screen
+    draw() {
+        // un comment if you want to see red blocks
+        c.fillStyle = 'rgba(255, 0, 0, .5)'
+        //c.fillStyle = 'rgba(0, 0, 0, 0)'
+        c.fillRect(this.position.x, this.position.y, this.width, this.height) 
+        
+    }
+}
+
 
 
 
@@ -356,12 +378,12 @@ window.addEventListener('keydown', (event) => {
         case 'd':
             //when d is press it will move the player on the x psotion by 1 pixel to the right 
             keys1.d.pressed =true
-            lastKey1 = 'd'
+            lastKey = 'd'
             break
         case 'a':
             //when a is press it will move the player on the x psotion by 1 pixel to the the left 
             keys1.a.pressed =true
-           lastKey1 = 'a'
+           lastKey = 'a'
             break
             //this is for jump
         case 'w':
