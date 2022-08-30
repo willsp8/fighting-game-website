@@ -185,10 +185,10 @@ class Fighter extends Sprite{
 
     }
 
-    takeHit(damage, lastKey1){
+    takeHit(damage, lastKey1, P){
         
         this.health -= damage
-        
+        this.switchSprite('takeHitRight')
         console.log(this.health)
         if(this.health <= 0 ){
             this.position.x = this.position.x
@@ -203,6 +203,10 @@ class Fighter extends Sprite{
             if(this.lastKey == 'a' || lastKey1 == 'ArrowLeft'){
                 console.log('old2')
                 
+                this.switchSprite('takeHitRight')
+            }
+
+            if(P == true){
                 this.switchSprite('takeHitRight')
             }
         }
