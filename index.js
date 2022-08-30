@@ -856,7 +856,7 @@ function animate(){
     const angle = Math.atan2(enemy.position.y - player.position.y, enemy.position.x - player.position.x )
     const angleStartingpoint = Math.atan2(startingPoint.position.y - enemy.position.y, startingPoint.position.x - enemy.position.x )
     enemy.velocity.x = 0
-    if(enemy.dead == false && enemy.image != enemy.sprites.death.image && enemy.frameCurrent != 0){
+    if(enemy.dead == false && enemy.image != enemy.sprites.death.image ){
         if(rechtangularCollision2({
             rectangle1: player,
             rectangle2: enemyArea,
