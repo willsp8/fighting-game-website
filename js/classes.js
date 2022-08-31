@@ -386,6 +386,24 @@ class BoundaryArea{
     }
 }
 
+class BoundaryFightingArea{
+    static width = 256 * 5
+    static height = 256
+    constructor({position}) {
+        this.position = position
+        this.width = 256 * 5
+        this.height = 256 
+    }
+    //draws boundary onto the screen
+    draw() {
+        // un comment if you want to see red blocks
+        c.fillStyle = 'rgba(255, 0, 0, .5)'
+        //c.fillStyle = 'rgba(0, 0, 0, 0)'
+        c.fillRect(this.position.x, this.position.y, this.width, this.height) 
+        
+    }
+}
+
 
 
 
