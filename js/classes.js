@@ -189,7 +189,7 @@ class Fighter extends Sprite{
         
         this.health -= damage
         this.switchSprite('takeHitRight')
-        console.log(this.health)
+        
         if(this.health <= 0 ){
             this.position.x = this.position.x
             this.switchSprite('death') 
@@ -225,20 +225,20 @@ class Fighter extends Sprite{
             return
         }
         // overriding 
-        if(this.image == this.sprites.attack1Right.image && this.frameCurrent < this.sprites.attack1Right.fm - 1){ console.log('whats'); return}
+        if(this.image == this.sprites.attack1Right.image && this.frameCurrent < this.sprites.attack1Right.fm - 1){ return}
         if(this.image == this.sprites.attack1Left.image && this.frameCurrent < this.sprites.attack1Left.fm - 1)return
 
         // override when fighter gets hit 
        
         if(this.image == this.sprites.takeHitRight.image && timers < 20){ 
-            console.log('my goodness')
+            
            // console.log(timers)
             timers += 1 
             return}
 
         if(this.image == this.sprites.takeHitLeft.image && timers < 20){ 
-            console.log('my goodness')
-            console.log(timers)
+           
+            
             timers += 1 
             return}    
         //timers = 
