@@ -5,6 +5,7 @@ const c = canvas.getContext('2d')
 
 //width and height of canvas
 canvas.width = 1024
+//canvas.height = 576
 canvas.height = 576
 
 //draws onto canvas: note when you run this by itself you sould see a black screen that is 1024 by 576 pixels
@@ -24,15 +25,24 @@ const background = new Sprite({
 const background_houses = new Sprite({
     position: {
         x: 0,
-        y: -1650,
+        y: -4650,
     },
-    imageSrc: './res/map/castle.png'
+    imageSrc: './res/map/townMapImage.png'
+    
+})
+
+const backgroundLights= new Sprite({
+    position: {
+        x: 0,
+        y: -4650,
+    },
+    imageSrc: './res/map/townMapLightImage.png'
     
 })
 
 const boundariesMap = []
-for(let i = 0; i < town_collisions.length; i += 90){
-    boundariesMap.push(town_collisions.slice(i, 90 + i))
+for(let i = 0; i < town_collisions.length; i += 270){
+    boundariesMap.push(town_collisions.slice(i, 270 + i))
 }
 const boundaries = []
 boundariesMap.forEach((row, i) => {
@@ -44,7 +54,7 @@ boundariesMap.forEach((row, i) => {
                     position: {
                         // this will subtract -1050 from the Boundary offset
                         x: j * Boundary.width,
-                        y: i * Boundary.height - 1650
+                        y: i * Boundary.height - 4650
                     }
                 })
             )
@@ -54,20 +64,20 @@ boundariesMap.forEach((row, i) => {
 })
 
 const boundariesMap2 = []
-for(let i = 0; i < town_y_collisions.length; i += 90){
-    boundariesMap2.push(town_y_collisions.slice(i, 90 + i))
+for(let i = 0; i < town_y_collisions.length; i += 270){
+    boundariesMap2.push(town_y_collisions.slice(i, 270 + i))
 }
 const boundaries2 = []
 boundariesMap2.forEach((row, i) => {
     row.forEach((Symbol, j) => {
-        if(Symbol == 2182){
+        if(Symbol == 2524){
             
             boundaries2.push(
                 new Boundary({
                     position: {
                         // this will subtract -1050 from the Boundary offset
                         x: j * Boundary.width,
-                        y: i * Boundary.height - 1650
+                        y: i * Boundary.height - 4650
                     }
                 })
             )
@@ -76,7 +86,30 @@ boundariesMap2.forEach((row, i) => {
     })
 })
 
+const boundariesRoofMap = []
+for(let i = 0; i < town_roof_collisions.length; i += 270){
+    boundariesRoofMap.push(town_roof_collisions.slice(i, 270 + i))
+}
 
+const boundariesRoof = []
+boundariesRoofMap.forEach((row, i) => {
+    row.forEach((Symbol, j) => {
+        if(Symbol == 2524){
+            
+            boundariesRoof.push(
+                new Boundary({
+                    position: {
+                        // this will subtract -1050 from the Boundary offset
+                        x: j * Boundary.width,
+                        y: i * Boundary.height - 4650
+                    }
+                })
+            )
+        }
+            
+    })
+})
+console.log(boundariesRoof)
 const shop = new Sprite({
     position: {
         x:500,
@@ -294,6 +327,8 @@ const startingPoint = new Boundary({
     }
 })
 
+
+
 const enemy2 = new Fighter({
     position: {
         x: 600,
@@ -387,6 +422,8 @@ const startingPoint2 = new Boundary({
 
 
 
+
+
 console.log(enemy)
 
 //draws enemy
@@ -434,7 +471,7 @@ let walkLeft = false
 let lastKey1 = ''
 let ALCAttack = 0
 //animation loop 
-const movables = [...boundaries, ...boundaries2, startingPoint, startingPoint2, enemyFightingArea ]
+const movables = [...boundariesRoof, ...boundaries, ...boundaries2, startingPoint, startingPoint2, enemyFightingArea, backgroundLights ]
 const enemiesmovables = [enemy, enemy2, enemyArea, enemyArea2]
 function animate(){
     //player.isAttacking = false
@@ -456,10 +493,16 @@ function animate(){
     player.update()
     enemy.update()
     enemy2.update()
+    backgroundLights.draw()
    // testBoundary.draw()
    startingPoint.draw()
    startingPoint2.draw()
+   
     boundaries.forEach((boundary) => {
+        boundary.draw()
+    })
+
+    boundariesRoof.forEach((boundary) => {
         boundary.draw()
     })
 
@@ -467,12 +510,16 @@ function animate(){
         boundary.draw()
     })
 
-    enemyArea.draw()
-    enemyArea2.draw()
+    
+    
+    //enemyArea.draw()
+   // enemyArea2.draw()
     // player movement
     player.velocity.x = 0
-    enemyFightingArea.draw()
-   
+    //enemyFightingArea.draw()
+    
+
+    
     // this will change the direction of the attack box for player
     //for enemy collision for walls
     collisionEnemies(boundaries2, enemy)
@@ -516,7 +563,7 @@ function animate(){
             })
         ){
            
-            //console.log(player.velocity.x)
+            console.log('teammate')
            jumps = 0
            //console.log('okay')
             player.velocity.y +=  5
@@ -529,6 +576,27 @@ function animate(){
         }
     }
 
+    for (let i = 0; i < boundariesRoof.length; i++){
+        const boundary = boundariesRoof[i]
+        if(rechtangularCollision3({
+            rectangle1: player,
+            //makes a clone of the boundary object 
+            rectangle2: {
+                ...boundary
+               
+            },
+            
+            posY: 0
+        })){
+            
+            jumps = jumpsMax
+                    player.velocity.y =  0
+                    movingY = false
+                    keys.w.pressed == false
+        }
+                
+            
+    }
     // player movement and wall collisions
     if (keys.a.pressed && player.lastKey == 'a' && moving == true){
         
@@ -784,7 +852,7 @@ function animate(){
         //console.log('tea')
         for (let i = 0; i < boundaries2.length; i++){
             const boundary = boundaries2[i]
-            
+                
              if(
                 rechtangularCollision2({
                     rectangle1: player,
@@ -800,7 +868,7 @@ function animate(){
                 //noLongerFall = false
                //console.log(player.position.y)
                 
-                //console.log('standing on block')
+                console.log('standing on block')
                 
                 jumps = jumps - 1
                 console.log('okay')
@@ -813,6 +881,9 @@ function animate(){
                 
             }
         }
+
+        
+
         if(player.lastKey == 'd'){
             player.switchSprite('fallRight')
             

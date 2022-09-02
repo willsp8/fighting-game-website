@@ -1,3 +1,25 @@
+// save for enemies
+    for (let i = 0; i < boundariesRoof.length; i++){
+        const boundary = boundariesRoof[i]
+        if(rechtangularCollision3({
+            rectangle1: player,
+            //makes a clone of the boundary object 
+            rectangle2: {
+                ...boundary
+               
+            }
+        }) ){
+            console.log('whats up')
+           
+            player.velocity.y =  0
+            
+          //  jumps = jumpsMax
+        }
+    
+    }
+
+
+
 function collisionEnemies(boundaries2, enemy){
     for (let i = 0; i < boundaries2.length; i++){
         const boundary = boundaries2[i]

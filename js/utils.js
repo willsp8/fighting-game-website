@@ -8,7 +8,30 @@ function rechtangularCollision({rectangle1, rectangle2}) {
     )
 }
 
+function rechtangularCollision3({rectangle1, rectangle2, posY}) {
+    return(
+        rectangle1.position.y + rectangle1.height
+         <= rectangle2.position.y + posY && rectangle1.position.y + rectangle1.height
+         + rectangle1.velocity.y + 15 >= rectangle2.position.y + posY &&
+         rectangle1.position.x + rectangle1.width >= rectangle2.position.x &&
+         rectangle1.position.x <= rectangle2.position.x + rectangle2.width
+        
+    )
+}
+
 function rechtangularCollision2({rectangle1, rectangle2, posX, posY}) {
+    // console.log(rectangle2.position.x)
+    // console.log('now the player')
+    // console.log(rectangle1.position.x)
+    return(
+        rectangle1.position.x + rectangle1.width >= rectangle2.position.x + posX
+        && rectangle1.position.x <= (rectangle2.position.x + posX) + rectangle2.width &&
+        rectangle1.position.y + rectangle1.height >= rectangle2.position.y + posY
+        && rectangle1.position.y <= (rectangle2.position.y + posY) + rectangle2.height
+    )
+}
+
+function rechtangularCollision4({rectangle1, rectangle2, posX, posY}) {
     // console.log(rectangle2.position.x)
     // console.log('now the player')
     // console.log(rectangle1.position.x)
