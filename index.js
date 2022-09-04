@@ -127,6 +127,7 @@ const shop = new Sprite({
 // also this is an player object
 const player = new Fighter({
     // wrapping the x and y with position
+    // 500
     position: {
         x: 500,
         y: 0
@@ -424,13 +425,10 @@ const startingPoint2 = new Boundary({
 
 
 
-console.log(enemy)
-
 //draws enemy
 enemy.draw()
 
 
-console.log(player)
 
 const keys = {
     a: {
@@ -458,7 +456,8 @@ const keys = {
 decreaeTimer()
 let numOfPressed = 0
 let jumps = 0
-let jumpsMax = 5
+let jumpsMax = 5.1
+// 5.1
 let jumpsEnemy = 0
 let jumpsMaxEnemy = 10
 let time = 0 
@@ -471,8 +470,13 @@ let walkLeft = false
 let lastKey1 = ''
 let ALCAttack = 0
 //animation loop 
-const movables = [...boundariesRoof, ...boundaries, ...boundaries2, startingPoint, startingPoint2, enemyFightingArea, backgroundLights ]
-const enemiesmovables = [enemy, enemy2, enemyArea, enemyArea2]
+const movables = [...boundariesRoof, ...boundaries, ...boundaries2, startingPoint, 
+    startingPoint2, startingPoint3, startingPoint4, startingPoint5, 
+    startingPoint6, startingPoint7,
+    enemyFightingArea, enemyFightingArea3, backgroundLights  ]
+const enemiesmovables = [enemy, enemy2, enemy4, enemy5, enemy6, enemy7,
+    enemyArea6, enemyArea7, enemyArea, enemyArea2, enemyArea5, enemy3, enemyArea3, 
+    enemyArea4]
 function animate(){
     //player.isAttacking = false
     //this will keep calling the animate function like a for loop/ infite loop until we tell it to stop
@@ -493,11 +497,27 @@ function animate(){
     player.update()
     enemy.update()
     enemy2.update()
+    enemy3.update()
+    enemy4.update()
+    enemy5.update()
+    enemy6.update()
+    enemy7.update()
     backgroundLights.draw()
    // testBoundary.draw()
    startingPoint.draw()
    startingPoint2.draw()
+   startingPoint3.draw()
+   startingPoint4.draw()
+   startingPoint5.draw()
+   startingPoint6.draw()
+   startingPoint7.draw()
+   enemyArea3.draw()
+   enemyArea5.draw()
+   enemyArea6.draw()
+   enemyArea7.draw()
+   //enemyFightingArea3.draw()
    
+   console.log(enemy6.position.y)
     boundaries.forEach((boundary) => {
         boundary.draw()
     })
@@ -522,8 +542,7 @@ function animate(){
     
     // this will change the direction of the attack box for player
     //for enemy collision for walls
-    collisionEnemies(boundaries2, enemy)
-    collisionEnemies(boundaries2, enemy2)
+    
    
 
     //for player collision for ceiling
@@ -585,18 +604,18 @@ function animate(){
                 ...boundary
                
             },
-            
             posY: 0
         })){
             
             jumps = jumpsMax
-                    player.velocity.y =  0
-                    movingY = false
-                    keys.w.pressed == false
+            player.velocity.y =  0
+            movingY = false
+            keys.w.pressed == false
         }
                 
             
     }
+
     // player movement and wall collisions
     if (keys.a.pressed && player.lastKey == 'a' && moving == true){
         
@@ -966,18 +985,38 @@ function animate(){
     
 
     // all the enemy stfff
-
+    collisionEnemies(boundaries2, enemy)
+    collisionEnemies(boundaries2, enemy2)
+    collisionEnemies(boundariesRoof, enemy3)
+    collisionEnemies(boundariesRoof, enemy4)
+    collisionEnemies(boundariesRoof, enemy5)
+    collisionEnemies(boundariesRoof, enemy6)
+    collisionEnemies(boundariesRoof, enemy7)
     // use this for when you collide with something above the enemy's head
     collisionY(player, enemy)
     collisionY(player, enemy2)
+    collisionY(player, enemy3)
+    collisionY(player, enemy4)
+    collisionY(player, enemy5)
+    collisionY(player, enemy6)
+    collisionY(player, enemy7)
     // death function 
    
     enemyDeath(enemy, startingPoint, enemyArea)
     enemyDeath(enemy2, startingPoint2, enemyArea2)
-
+    enemyDeath(enemy3, startingPoint3, enemyArea3)
+    enemyDeath(enemy4, startingPoint4, enemyArea4)
+    enemyDeath(enemy5, startingPoint5, enemyArea5)
+    enemyDeath(enemy6, startingPoint6, enemyArea6)
+    enemyDeath(enemy6, startingPoint6, enemyArea6)
     // enemyAI function 
-    enemyAI(player, enemy, startingPoint, enemyArea, enemyFightingArea)
-    enemyAI(player, enemy2, startingPoint2, enemyArea2, enemyFightingArea)
+    enemyAI(player, enemy, startingPoint, enemyArea)
+    enemyAI(player, enemy2, startingPoint2, enemyArea2)
+    enemyAI(player, enemy3, startingPoint3, enemyArea3)
+    enemyAI(player, enemy4, startingPoint4, enemyArea4)
+    enemyAI(player, enemy5, startingPoint5, enemyArea5)
+    enemyAI(player, enemy6, startingPoint6, enemyArea6)
+    enemyAI(player, enemy7, startingPoint7, enemyArea7)
 
     if(player.health <= 0){
         player.switchSprite('death')
@@ -986,7 +1025,10 @@ function animate(){
     //detect for collision for player also this is where you can change sprites for being hit 
     playerAttack(player, enemy)
     playerAttack(player, enemy2)
-   
+    playerAttack(player, enemy3)
+    playerAttack(player, enemy4)
+    playerAttack(player, enemy5)
+    playerAttack(player, enemy6)
 
     if(enemy.isAttacking && enemy.frameCurrent == 0){
         enemy.isAttacking = false
@@ -994,6 +1036,9 @@ function animate(){
 
     if(enemy2.isAttacking && enemy2.frameCurrent == 0){
         enemy2.isAttacking = false
+    }
+    if(enemy3.isAttacking && enemy3.frameCurrent == 0){
+        enemy3.isAttacking = false
     }
 
     //end game based on health
@@ -1129,7 +1174,7 @@ function collisionEnemies(boundaries2, enemy){
     }
 }
 
-function enemyAI(player, enemy, startingPoint, enemyArea, enemyFightingArea){
+function enemyAI(player, enemy, startingPoint, enemyArea){
 
     
     const angle = Math.atan2(enemy.position.y - player.position.y, enemy.position.x - player.position.x )
@@ -1137,12 +1182,7 @@ function enemyAI(player, enemy, startingPoint, enemyArea, enemyFightingArea){
     enemy.velocity.x = 0
 
     if(enemy.dead == false && enemy.image != enemy.sprites.death.image ){
-        if(rechtangularCollision2({
-            rectangle1: enemy,
-            rectangle2: enemyFightingArea,
-            posX: 0,
-            posY: 0
-        })){
+        
             if(rechtangularCollision2({
                 rectangle1: player,
                 rectangle2: enemyArea,
@@ -1175,7 +1215,7 @@ function enemyAI(player, enemy, startingPoint, enemyArea, enemyFightingArea){
                     })){
                         enemy.attackBox.position.x += 1
                         enemy.velocity.x += 1
-                        enemyArea.position.x += 1
+                        //enemyArea.position.x += 1
                     }
                     if(rechtangularCollision2({
                         rectangle1: player,
@@ -1185,7 +1225,7 @@ function enemyAI(player, enemy, startingPoint, enemyArea, enemyFightingArea){
                     })){
                         enemy.attackBox.position.x -= 1
                         enemy.velocity.x -= 1
-                        enemyArea.position.x -= 1
+                        //enemyArea.position.x -= 1
                     }
                     
                    // console.log(ALCAttack)
@@ -1229,13 +1269,13 @@ function enemyAI(player, enemy, startingPoint, enemyArea, enemyFightingArea){
                             enemy.switchSprite('runLeft')
                             enemy.attackBox.position.x -= 3
                             enemy.velocity.x -= 3
-                            enemyArea.position.x -= 3
+                           // enemyArea.position.x -= 3
                        }
                        if(angle *(180/Math.PI) > 90 && angle *(180/Math.PI) <= 180 || angle *(180/Math.PI) < -90 && angle *(180/Math.PI) >= -180 ){
                             enemy.switchSprite('runRight')
                             enemy.attackBox.position.x += 3
                             enemy.velocity.x += 3
-                            enemyArea.position.x += 3
+                           // enemyArea.position.x += 3
                         
                         }
                    
@@ -1266,7 +1306,7 @@ function enemyAI(player, enemy, startingPoint, enemyArea, enemyFightingArea){
                     enemy.attackBox.position.x -= angleStartingpoint
                     enemy.position.x -= angleStartingpoint
                 
-                    enemyArea.position.x -= angleStartingpoint
+                  //  enemyArea.position.x -= angleStartingpoint
                 }
         
                 
@@ -1275,7 +1315,7 @@ function enemyAI(player, enemy, startingPoint, enemyArea, enemyFightingArea){
                     enemy.attackBox.position.x += -angleStartingpoint
                     enemy.position.x += -angleStartingpoint
                 
-                    enemyArea.position.x += -angleStartingpoint
+                   // enemyArea.position.x += -angleStartingpoint
                 }
                 
             }else{
@@ -1300,33 +1340,7 @@ function enemyAI(player, enemy, startingPoint, enemyArea, enemyFightingArea){
                 
                 
             }
-        }else if(
-            rechtangularCollision2({
-                rectangle1: enemy,
-                rectangle2: enemyFightingArea,
-                posX: 0,
-                posY: 0
-            }) == false
-        ){
-            console.log('wont')
-            if(angleStartingpoint *(180/Math.PI) >= 0 && angleStartingpoint *(180/Math.PI) < 90 ||  angleStartingpoint *(180/Math.PI) <= 0 && angleStartingpoint *(180/Math.PI) > -90){
-                       
-                enemy.switchSprite('runRight')
-                enemy.attackBox.position.x -= angleStartingpoint
-                enemy.position.x -= angleStartingpoint
-            
-                enemyArea.position.x -= angleStartingpoint
-            }
-    
-            
-            if(angleStartingpoint *(180/Math.PI) > 90 && angleStartingpoint *(180/Math.PI) <= 180 || angleStartingpoint *(180/Math.PI) < -90 && angleStartingpoint *(180/Math.PI) >= -180 ){
-                enemy.switchSprite('runLeft')
-                enemy.attackBox.position.x += -angleStartingpoint
-                enemy.position.x += -angleStartingpoint
-            
-                enemyArea.position.x += -angleStartingpoint
-            }
-        }
+        
     }
 }
 

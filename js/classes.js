@@ -127,11 +127,11 @@ class Fighter extends Sprite{
         this.attackBox.position.x = this.position.x + this.attackBox.offset.x
         this.attackBox.position.y = this.position.y + this.attackBox.offset.y
         //collision box of the attack weapon
-        // c.fillRect(this.attackBox.position.x, this.attackBox.position.y, 
-        //     this.attackBox.width, this.attackBox.height)
-        // //collision box of the player
-        // c.fillRect(this.position.x, this.position.y, 
-        //     this.width, this.height)
+        c.fillRect(this.attackBox.position.x, this.attackBox.position.y, 
+            this.attackBox.width, this.attackBox.height)
+        //collision box of the player
+        c.fillRect(this.position.x, this.position.y, 
+            this.width, this.height)
         this.position.x += this.velocity.x
         //this will move the object by how much we set the velocity for player and enemy on the y axis
         //or that it will have 10 pixels added on to it every frame
@@ -392,6 +392,60 @@ class BoundaryFightingArea{
     constructor({position}) {
         this.position = position
         this.width = 256 * 5
+        this.height = 256 
+    }
+    //draws boundary onto the screen
+    draw() {
+        // un comment if you want to see red blocks
+        c.fillStyle = 'rgba(255, 0, 0, .5)'
+        //c.fillStyle = 'rgba(0, 0, 0, 0)'
+        c.fillRect(this.position.x, this.position.y, this.width, this.height) 
+        
+    }
+}
+
+class BoundaryFightingArea2{
+    static width = 256 
+    static height = 256
+    constructor({position}) {
+        this.position = position
+        this.width = 256
+        this.height = 256 
+    }
+    //draws boundary onto the screen
+    draw() {
+        // un comment if you want to see red blocks
+        c.fillStyle = 'rgba(255, 0, 0, .5)'
+        //c.fillStyle = 'rgba(0, 0, 0, 0)'
+        c.fillRect(this.position.x, this.position.y, this.width, this.height) 
+        
+    }
+}
+
+class BoundaryFightingArea3{
+    static width = 256 * 3
+    static height = 256
+    constructor({position}) {
+        this.position = position
+        this.width = 256 * 3
+        this.height = 256 
+    }
+    //draws boundary onto the screen
+    draw() {
+        // un comment if you want to see red blocks
+        c.fillStyle = 'rgba(255, 0, 0, .5)'
+        //c.fillStyle = 'rgba(0, 0, 0, 0)'
+        c.fillRect(this.position.x, this.position.y, this.width, this.height) 
+        
+    }
+}
+
+class BoundaryFightingArea4{
+    static width = 256 * 2
+    static height = 256
+    constructor({position}) {
+        this.position = position
+        this.width = 256 * 2
         this.height = 256 
     }
     //draws boundary onto the screen
