@@ -127,11 +127,11 @@ class Fighter extends Sprite{
         this.attackBox.position.x = this.position.x + this.attackBox.offset.x
         this.attackBox.position.y = this.position.y + this.attackBox.offset.y
         //collision box of the attack weapon
-        c.fillRect(this.attackBox.position.x, this.attackBox.position.y, 
-            this.attackBox.width, this.attackBox.height)
-        //collision box of the player
-        c.fillRect(this.position.x, this.position.y, 
-            this.width, this.height)
+        // c.fillRect(this.attackBox.position.x, this.attackBox.position.y, 
+        //     this.attackBox.width, this.attackBox.height)
+        // //collision box of the player
+        // c.fillRect(this.position.x, this.position.y, 
+        //     this.width, this.height)
         this.position.x += this.velocity.x
         //this will move the object by how much we set the velocity for player and enemy on the y axis
         //or that it will have 10 pixels added on to it every frame

@@ -477,6 +477,7 @@ const movables = [...boundariesRoof, ...boundaries, ...boundaries2, startingPoin
 const enemiesmovables = [enemy, enemy2, enemy4, enemy5, enemy6, enemy7,
     enemyArea6, enemyArea7, enemyArea, enemyArea2, enemyArea5, enemy3, enemyArea3, 
     enemyArea4]
+    
 function animate(){
     //player.isAttacking = false
     //this will keep calling the animate function like a for loop/ infite loop until we tell it to stop
@@ -532,19 +533,9 @@ function animate(){
 
     
     
-    //enemyArea.draw()
-   // enemyArea2.draw()
+    
     // player movement
     player.velocity.x = 0
-    //enemyFightingArea.draw()
-    
-
-    
-    // this will change the direction of the attack box for player
-    //for enemy collision for walls
-    
-   
-
     //for player collision for ceiling
     for (let i = 0; i < boundaries2.length; i++){
         const boundary = boundaries2[i]
@@ -565,9 +556,6 @@ function animate(){
             jumps = jumpsMax
             player.velocity.y =  0
             movingY = false
-            keys.w.pressed == false
-            //console.log(player.velocity.x)
-            //moving = false
             
         }else if(
             rechtangularCollision2({
@@ -582,15 +570,9 @@ function animate(){
             })
         ){
            
-            console.log('teammate')
-           jumps = 0
-           //console.log('okay')
+            jumps = 0
             player.velocity.y +=  5
-            //  player.position.y -= 4
-            //movingY = false
-            keys.w.pressed == false
-            
-            //moving = false
+
             
         }
     }
@@ -637,8 +619,6 @@ function animate(){
                 posY: 0
             }) == false 
         ){  
-            // player.image = player.sprites.runLeft.image
-            // player.fm = player.sprites.runLeft.fm
             player.switchSprite('runLeft')
 
             player.attackBox.position.x = -10
@@ -661,12 +641,9 @@ function animate(){
                     posY: 0
                 })
             ){
-                console.log('nice')
-                
                 player.velocity.x =  0
                 moving = false
-                //moving = false
-                
+
             }
         }
 
@@ -692,9 +669,6 @@ function animate(){
                 posY: 0
             }) == false 
         ){  
-            // player.image = player.sprites.runRight.image
-            // player.fm = player.sprites.runRight.fm
-            //console.log('runright is ')
             player.switchSprite('runRight')
             player.attackBox.position.x = -10
             player.velocity.x = 5
@@ -718,37 +692,26 @@ function animate(){
                 })
             ){
                 noLongerFall = false
-                console.log('nice 2')
                 player.velocity.x =  0
-                
                 moving = false
-                
             }
         }
 
         if(moving == true){
-            //console.log('runright is ')
             player.switchSprite('runRight')
             player.attackBox.position.x = -10
             player.velocity.x = 5
         }
 
      }else if(player.lastKey == 'a'  && player.velocity.x == 0 ){
-        //console.log('leftside')
-        // player.image = player.sprites.idleLeft.image
-        // player.fm = player.sprites.idleLeft.fm
-        //console.log('left idle')
         player.switchSprite('idleLeft')
     }else if( player.lastKey == 'd' && player.velocity.x == 0 ){
-       //console.log('idle right')
-       
         player.switchSprite('idle')
         
     }
     
     // camera movement for player
     if(keys.d.pressed && player.position.x > 600){
-      //  console.log('player is moving')
         for (let i = 0; i < boundaries.length; i++){
             const boundary = boundaries[i]
             
@@ -764,11 +727,9 @@ function animate(){
                     posY: 0
                 })
             ){
-                console.log('nice')
-                
                 player.velocity.x =  0
                 moving = false
-                //moving = false
+                
                 
             }
         }
@@ -778,12 +739,6 @@ function animate(){
             enemiesmovables.forEach((movables) =>{
                 movables.position.x -= 5
             })
-            
-            // enemy.position.x -= 5
-            // enemy2.position.x -= 5
-            
-            // enemyArea.position.x -= 5
-            // enemyArea2.position.x -= 5
             shop.position.x -= 5 
             background_houses.position.x -= 5 
             movables.forEach((movable) => {
@@ -811,11 +766,10 @@ function animate(){
                     posY: 0
                 })
             ){
-                //console.log('nice')
                 
                 player.velocity.x =  0
                 moving = false
-                //moving = false
+                
                 
             }
         }
@@ -826,12 +780,6 @@ function animate(){
             enemiesmovables.forEach((movables) =>{
                 movables.position.x += 5
             })
-            
-            // enemy.position.x -= 5
-            // enemy2.position.x -= 5
-            
-            // enemyArea.position.x -= 5
-            // enemyArea2.position.x -= 5
             
             shop.position.x += 5 
             
@@ -884,19 +832,10 @@ function animate(){
                     posY: 10
                 })
             ){
-                //noLongerFall = false
-               //console.log(player.position.y)
-                
-                console.log('standing on block')
                 
                 jumps = jumps - 1
-                console.log('okay')
                 player.velocity.y +=  10
-                //  player.position.y -= 4
-                //movingY = false
-                keys.w.pressed == false
-                
-                //moving = false
+   
                 
             }
         }
@@ -911,10 +850,7 @@ function animate(){
             enemiesmovables.forEach((movables) =>{
                 movables.position.y -= 10
             })
-            // enemy.position.y -= 10
-            // enemy2.position.y -= 10
-            // enemyArea.position.y -= 10
-            // enemyArea2.position.y -= 10
+            
             shop.position.y -= 10
             background_houses.position.y -= 10
             movables.forEach((movable) => {
@@ -929,10 +865,7 @@ function animate(){
             enemiesmovables.forEach((movables) =>{
                 movables.position.y -= 10
             })
-            // enemy.position.y -= 10
-            // enemy2.position.y -= 10
-            // enemyArea.position.y -= 10
-            // enemyArea2.position.y -= 10
+            
             shop.position.y -= 10
             background_houses.position.y -= 10
             movables.forEach((movable) => {
@@ -942,37 +875,28 @@ function animate(){
             }) 
         } 
     }
+
     // player ceiling collisions
     if(keys.w.pressed == true && jumps > 0){
         jumps = jumps - 1
         player.velocity.y = -10
-        //console.log('jump')
-       // console.log(jumps)
+       
         enemiesmovables.forEach((movables) =>{
-            movables.position.y += 10
+            movables.position.y += 15
         })
         
-            //enemy.position.y += 10
-            shop.position.y += 10
-            //enemyArea.position.y += 10
-           // enemy2.position.y += 10
-           // enemyArea2.position.y += 10
-            background_houses.position.y += 10
+            
+            shop.position.y += 15
+            
+            background_houses.position.y += 15
             movables.forEach((movable) => {
                         
-                movable.position.y +=10
+                movable.position.y +=15
                 
             }) 
-    }else if(keys.w.pressed == true && numOfPressed > 3){
-        numOfPressed = 0
-        //console.log(numOfPressed)
     }
 
-    // if(keys.ArrowUp.pressed == true && jumpsEnemy > 0){
-    //     jumpsEnemy = jumpsEnemy - 1
-    //     enemy.velocity.y = -10
-
-    // }
+    
    
     if(player.lastKey == 'a' && player.isAttacking == true){
         
