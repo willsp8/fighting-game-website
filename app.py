@@ -13,13 +13,30 @@ import sqlalchemy
 from dotenv import load_dotenv
 
 
+load_dotenv()
 app = Flask(__name__)
-bcrypt = Bcrypt()
-bcrypt.init_app(app)
+# bcrypt = Bcrypt()
+
 
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.secret_key = os.getenv('SECRET_KEY')
+
+
+bcrypt = Bcrypt()
+bcrypt.init_app(app)
+db = SQLAlchemy(app)
+
+class User(db.Model):
+    __tablename__ = 'app_user'
+    user_id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String, nullable=False, unique=True)
+    password = db.Column(db.String, nullable=False)
+
+    def __init__(self, username, password) -> None:
+        self.password = password
+        self.username = username
 
 @app.get('/')
 def index():
@@ -38,9 +55,13 @@ def register():
     username = request.form.get('username')
     password = request.form.get('password')
 
-    hashed_password = bcrypt.generate_password_hash(password)
-    return redirect('/login')
+    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    new_user = User(username, hashed_password)
+    db.session.add(new_user)
+    db.session.commit()
+    return redirect('/')
 
 @app.get('/login')
 def login():
-    return render_template(login.html)
+    return render_template('login.html')
