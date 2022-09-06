@@ -51,11 +51,16 @@
         <canvas></canvas>
     </div>
 
-    <script src="js/collisions.js"></script>
+    <!-- <script src="static/js/collisions.js"></script> -->
+    <script src="{{url_for('static', filename='collisions.js')}}"></script>
     
-    <script src="js/classes.js"></script>
-    <script src="js/npcs.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="index.js"></script>
+    <!-- <script src="static/js/classes.js"></script> -->
+    <script src="{{url_for('static', filename='classes.js')}}"></script>
+    <!-- <script src="static/js/npcs.js"></script> -->
+    <script src="{{url_for('static', filename='npcs.js')}}"></script>
+    <!-- <script src="static/js/utils.js"></script> -->
+    <script src="{{url_for('static', filename='utils.js')}}"></script>
+    <!-- <script src="static/index.js"></script> -->
+    <script src="{{url_for('static', filename='index.js')}}"></script>
     
 </body>

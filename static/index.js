@@ -18,7 +18,7 @@ const background = new Sprite({
         x: 0,
         y: 0,
     },
-    imageSrc: './res/middleground.png'
+    imageSrc: './static/res/middleground.png'
     
 })
 
@@ -27,7 +27,7 @@ const background_houses = new Sprite({
         x: 0,
         y: -4650,
     },
-    imageSrc: './res/map/townMapImage.png'
+    imageSrc: './static/res/map/townMapImage.png'
     
 })
 
@@ -36,7 +36,7 @@ const backgroundLights= new Sprite({
         x: 0,
         y: -4650,
     },
-    imageSrc: './res/map/townMapLightImage.png'
+    imageSrc: './static/res/map/townMapLightImage.png'
     
 })
 
@@ -115,7 +115,7 @@ const shop = new Sprite({
         x:500,
         y: 130
     },
-    imageSrc: './res/shop.png',
+    imageSrc: './static/res/shop.png',
     scale: 2.7,
     fm: 6
 
@@ -136,7 +136,7 @@ const player = new Fighter({
         x: 0,
         y: 0
     },
-    imageSrc: './res/player/Idle.png',
+    imageSrc: './static/res/player/Idle.png',
     fm: 11, 
     scale: 2,
 
@@ -146,58 +146,57 @@ const player = new Fighter({
     },
     sprites: {
         idle:{
-            imageSrc:'./res/player/Idle.png',
+            imageSrc:'./static/res/player/Idle.png',
             fm: 11,
         },
         idleLeft:{
-            imageSrc:'./res/player/IdleLeft.png',
+            imageSrc:'./static/res/player/IdleLeft.png',
             fm: 11,
         },
         runRight: {
-            imageSrc: './res/player/Run.png',
+            imageSrc: './static/res/player/Run.png',
             fm: 8
         },
         runLeft: {
-            imageSrc: './res/player/RunLeft.png',
+            imageSrc: './static/res/player/RunLeft.png',
             fm: 8
         },
         jumpright: {
-            imageSrc: './res/player/Jump.png',
+            imageSrc: './static/res/player/Jump.png',
             fm: 3
         }, 
         jumpLeft: {
-            imageSrc: './res/player/JumpLeft.png',
+            imageSrc: './static/res/player/JumpLeft.png',
             fm: 3
         },
         fall: {
-            imageSrc: './res/player/Fall.png',
+            imageSrc: './static/res/player/Fall.png',
             fm: 3
         }, 
         fallLeft: {
-            imageSrc: './res/player/FallLeft.png',
+            imageSrc: './static/res/player/FallLeft.png',
             fm: 3
         }, 
         attack1Right: {
-            imageSrc: './res/player/Attack1.png',
+            imageSrc: './static/res/player/Attack1.png',
             fm: 7
         }, 
         attack1Left: {
-            imageSrc: './res/player/Attack1Left.png',
+            imageSrc: './static/res/player/Attack1Left.png',
             fm: 7
         }, 
         takeHitRight: {
-            imageSrc: './res/player/TakeHit.png',
+            imageSrc: './static/res/player/TakeHit.png',
             fm: 4
         },
         takeHitLeft: {
-            imageSrc: './res/player/Take HitLeft.png',
+            imageSrc: './static/res/player/Take HitLeft.png',
             fm: 4
         }, 
         death: {
-            imageSrc: './res/player/Death.png',
+            imageSrc: './static/res/player/Death.png',
             fm: 11
         }
-
     },
     attackBox: {
         offset: {
@@ -246,7 +245,7 @@ const enemy = new Fighter({
         x: 0,
         y: 0
     },
-    imageSrc: './res/player/Idle.png',
+    imageSrc: './static/res/player/Idle.png',
     offset: {
         x: 160,
         y: 110
@@ -257,55 +256,55 @@ const enemy = new Fighter({
 
     sprites: {
         idle:{
-            imageSrc:'./res/player/Idle.png',
+            imageSrc:'./static/res/player/Idle.png',
             fm: 11,
         },
         idleLeft:{
-            imageSrc:'./res/player/IdleLeft.png',
+            imageSrc:'./static/res/player/IdleLeft.png',
             fm: 11,
         },
         runRight: {
-            imageSrc: './res/player/Run.png',
+            imageSrc: './static/res/player/Run.png',
             fm: 8
         },
         runLeft: {
-            imageSrc: './res/player/RunLeft.png',
+            imageSrc: './static/res/player/RunLeft.png',
             fm: 8
         },
         jumpright: {
-            imageSrc: './res/player/Jump.png',
+            imageSrc: './static/res/player/Jump.png',
             fm: 3
         }, 
         jumpLeft: {
-            imageSrc: './res/player/JumpLeft.png',
+            imageSrc: './static/res/player/JumpLeft.png',
             fm: 3
         },
         fall: {
-            imageSrc: './res/player/Fall.png',
+            imageSrc: './static/res/player/Fall.png',
             fm: 3
         }, 
         fallLeft: {
-            imageSrc: './res/player/FallLeft.png',
+            imageSrc: './static/res/player/FallLeft.png',
             fm: 3
         }, 
         attack1Right: {
-            imageSrc: './res/player/Attack1.png',
+            imageSrc: './static/res/player/Attack1.png',
             fm: 7
         }, 
         attack1Left: {
-            imageSrc: './res/player/Attack1Left.png',
+            imageSrc: './static/res/player/Attack1Left.png',
             fm: 7
         }, 
         takeHitRight: {
-            imageSrc: './res/player/TakeHit.png',
+            imageSrc: './static/res/player/TakeHit.png',
             fm: 4
         },
         takeHitLeft: {
-            imageSrc: './res/player/Take HitLeft.png',
+            imageSrc: './static/res/player/Take HitLeft.png',
             fm: 4
         }, 
         death: {
-            imageSrc: './res/player/Death.png',
+            imageSrc: './static/res/player/Death.png',
             fm: 11
         }
 
@@ -339,7 +338,7 @@ const enemy2 = new Fighter({
         x: 0,
         y: 0
     },
-    imageSrc: './res/player/Idle.png',
+    imageSrc: './static/res/player/Idle.png',
     offset: {
         x: 160,
         y: 110
@@ -350,55 +349,55 @@ const enemy2 = new Fighter({
 
     sprites: {
         idle:{
-            imageSrc:'./res/player/Idle.png',
+            imageSrc:'./static/res/player/Idle.png',
             fm: 11,
         },
         idleLeft:{
-            imageSrc:'./res/player/IdleLeft.png',
+            imageSrc:'./static/res/player/IdleLeft.png',
             fm: 11,
         },
         runRight: {
-            imageSrc: './res/player/Run.png',
+            imageSrc: './static/res/player/Run.png',
             fm: 8
         },
         runLeft: {
-            imageSrc: './res/player/RunLeft.png',
+            imageSrc: './static/res/player/RunLeft.png',
             fm: 8
         },
         jumpright: {
-            imageSrc: './res/player/Jump.png',
+            imageSrc: './static/res/player/Jump.png',
             fm: 3
         }, 
         jumpLeft: {
-            imageSrc: './res/player/JumpLeft.png',
+            imageSrc: './static/res/player/JumpLeft.png',
             fm: 3
         },
         fall: {
-            imageSrc: './res/player/Fall.png',
+            imageSrc: './static/res/player/Fall.png',
             fm: 3
         }, 
         fallLeft: {
-            imageSrc: './res/player/FallLeft.png',
+            imageSrc: './static/res/player/FallLeft.png',
             fm: 3
         }, 
         attack1Right: {
-            imageSrc: './res/player/Attack1.png',
+            imageSrc: './static/res/player/Attack1.png',
             fm: 7
         }, 
         attack1Left: {
-            imageSrc: './res/player/Attack1Left.png',
+            imageSrc: './static/res/player/Attack1Left.png',
             fm: 7
         }, 
         takeHitRight: {
-            imageSrc: './res/player/TakeHit.png',
+            imageSrc: './static/res/player/TakeHit.png',
             fm: 4
         },
         takeHitLeft: {
-            imageSrc: './res/player/Take HitLeft.png',
+            imageSrc: './static/res/player/Take HitLeft.png',
             fm: 4
         }, 
         death: {
-            imageSrc: './res/player/Death.png',
+            imageSrc: './static/res/player/Death.png',
             fm: 11
         }
 
