@@ -1,0 +1,40 @@
+<style>
+    #main {
+    width: 200px;
+    border: 1px dotted black;
+    }
+    h1 {
+    margin: 0;
+        display: inline-block;
+    }
+    button {
+    float: right;
+    }
+
+</style>
+
+<body>
+    <h1> hello friend {{user}}</h1>
+    
+    <form action="/logout" method="post"> 
+
+        
+        <button type="submit">Logout</button>
+        
+    </form>
+
+    {% for users in allUsers %}
+        <div id="main">
+            <h1> {{users.username}}</h1>
+            <form action="/dashboard" method="post"> 
+                <input type="submit" name="addFollow" value= {{users.username}}>
+                
+            </form>
+        </div>
+        
+    {% endfor %}
+    <a href="/game">
+        <button>play game</button>
+    </a>
+</body>
+

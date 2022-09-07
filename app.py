@@ -38,8 +38,21 @@ class User(db.Model):
         self.password = password
         self.username = username
 
+class Following(db.Model):
+    __tablename__ = 'following'
+    following_id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String, nullable = True)
+    follow_id = db.Column(db.Integer, db.ForeignKey('app_user.user_id'), nullable=True)
+
+    def __init__(self,  username, follow_id) -> None:
+        
+        self.username = username
+        self.follow_id = follow_id
+
 @app.get('/')
 def index():
+    #if 'user' in session:
+     #   return redirect('/success')
     return render_template('landing_page.html')
 
 @app.get('/game')
@@ -48,12 +61,17 @@ def game():
 
 @app.get('/register')
 def get_register_page():
+    #if 'user' in session:
+    #    return redirect('/success')
     return render_template('register.html')
 
 @app.post('/register')
 def register():
-    username = request.form.get('username')
-    password = request.form.get('password')
+    username = request.form.get('username', '')
+    password = request.form.get('password', '')
+
+    if username == '' or password == '':
+        abort(400)
 
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
@@ -64,4 +82,60 @@ def register():
 
 @app.get('/login')
 def login():
-    return render_template('login.html')
+    return render_template('login.html ')
+
+@app.post('/login')
+def post_login():
+    username = request.form.get('username', '')
+    password = request.form.get('password', '')
+
+    # if user didnt put in anything for passowrd or username 
+    if username == '' or password == '':
+        abort(400)
+    
+    existing_user = User.query.filter_by(username=username).first()
+    
+    if not existing_user or existing_user.user_id == 0:
+        return redirect('/fail')
+
+    if not bcrypt.check_password_hash(existing_user.password, password):
+        return redirect('/fail')
+
+    session['user'] = username
+    return redirect('/success')
+
+@app.get('/success')
+def success():
+    if not 'user' in session:
+        abort(401)
+    return render_template('success.html')
+
+@app.get('/fail')
+def fail():
+    return render_template('fail.html')
+
+@app.get('/dashboard')
+def dashboard():
+    all_users = User.query.all()
+    return render_template('dashboard.html', user=session['user'], allUsers=all_users)
+
+@app.post('/dashboard')
+def add_user():
+    all_users = User.query.all()
+    add_follow = request.form.get('addFollow', '')
+    new_follow = Following(username=add_follow, follow_id=1)
+    db.session.add(new_follow)
+    db.session.commit()
+    #return render_template('dashboard.html', user=session['user'], allUsers=all_users)
+    return redirect('/dashboard')
+    
+
+@app.post('/logout')
+def logout():
+    if 'user' not in session:
+        abort(401)
+    
+    del session['user']
+    return redirect('/')
+
+
