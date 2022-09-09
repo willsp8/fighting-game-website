@@ -25,11 +25,14 @@
 
     {% for users in allUsers %}
         <div id="main">
-            <h1> {{users.username}}</h1>
-            <form action="/dashboard" method="post"> 
-                <input type="submit" name="addFollow" value= {{users.username}}>
+            <h1> <a href="/gamer/{{ users.username }}"> {{users.username}} </a></h1>
+            
+            <!-- <form action="/dashboard" method="post"> 
                 
-            </form>
+                
+                <input type="submit" name="addFollow" value={{users.username}}>
+                  
+            </form> -->
         </div>
         
     {% endfor %}

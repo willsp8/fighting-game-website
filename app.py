@@ -51,8 +51,8 @@ class Following(db.Model):
 
 @app.get('/')
 def index():
-    #if 'user' in session:
-     #   return redirect('/success')
+    if 'user' in session:
+       return redirect('/success')
     return render_template('landing_page.html')
 
 @app.get('/game')
@@ -61,8 +61,8 @@ def game():
 
 @app.get('/register')
 def get_register_page():
-    #if 'user' in session:
-    #    return redirect('/success')
+    if 'user' in session:
+       return redirect('/success')
     return render_template('register.html')
 
 @app.post('/register')
@@ -117,17 +117,55 @@ def fail():
 @app.get('/dashboard')
 def dashboard():
     all_users = User.query.all()
-    return render_template('dashboard.html', user=session['user'], allUsers=all_users)
+    all_follows = Following.query.all()
+    return render_template('dashboard.html', user=session['user'], allUsers=all_users, allFollows = all_follows)
 
-@app.post('/dashboard')
-def add_user():
+# @app.post('/dashboard')
+# def add_user():
+    
+#     all_users = User.query.all()
+#     add_follow = request.form.get('addFollow', '')
+#     follow_id = User.query.filter_by(username=session['user']).first()
+#     new_follow = Following(username=add_follow, follow_id=follow_id.user_id)
+#     db.session.add(new_follow)
+#     db.session.commit()
+#     #return render_template('dashboard.html', user=session['user'], allUsers=all_users)
+#     return redirect('/dashboard')
+
+@app.get('/gamer/<username>')
+def viewProfile(username):
+    single_user = User.query.filter_by(username=username).first()
+    user_id = User.query.filter_by(username=session['user']).first()
+    user_Follow_Table2 = Following.query.query.filter_by(username=username).all()
+    user_Follow_Table = None
+    for user in user_Follow_Table2:
+        print(user.follow_id)
+        if user.follow_id == user_id.user_id:
+            user_Follow_Table = user
+            print(user_Follow_Table)
     all_users = User.query.all()
+    all_follows = Following.query.all()
+    return render_template('viewProfile.html', user=session['user'], userFollowTable=user_Follow_Table, allUsers=all_users, allFollows = all_follows, singleUser=single_user, user_id=user_id)
+
+@app.post('/gamer/<username>')
+def add_user(username):
+    print(username)
+    single_user = User.query.filter_by(username=username).first()
+    user_id = User.query.filter_by(username=session['user']).first()
+    user_Follow_Table2 = Following.query.query.filter_by(username=username).all()
+    user_Follow_Table = None
+    for user in user_Follow_Table2:
+        print(user.follow_id)
+        if user.follow_id == user_id.user_id:
+            user_Follow_Table = user
+            print(user.follow_id)
     add_follow = request.form.get('addFollow', '')
-    new_follow = Following(username=add_follow, follow_id=1)
+    follow_id = User.query.filter_by(username=session['user']).first()
+    new_follow = Following(username=add_follow, follow_id=follow_id.user_id)
     db.session.add(new_follow)
     db.session.commit()
-    #return render_template('dashboard.html', user=session['user'], allUsers=all_users)
-    return redirect('/dashboard')
+
+    return render_template('viewProfile.html', user=session['user'], userFollowTable=user_Follow_Table, singleUser=single_user, user_id=user_id)
     
 
 @app.post('/logout')
