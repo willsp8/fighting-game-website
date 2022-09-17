@@ -1,0 +1,197 @@
+{% extends '_layout.html' %}
+{% block body %}
+
+<style>
+    body {
+background-color: #fbfbfb;
+}
+@media (min-width: 991.98px) {
+main {
+padding-left: 240px;
+}
+}
+
+/* Sidebar */
+.sidebar {
+position: fixed;
+top: 0;
+bottom: 0;
+left: 0;
+padding: 58px 0 0; /* Height of navbar */
+box-shadow: 0 2px 5px 0 rgb(0 0 0 / 5%), 0 2px 10px 0 rgb(0 0 0 / 5%);
+width: 240px;
+z-index: 600;
+}
+
+@media (max-width: 991.98px) {
+.sidebar {
+width: 100%;
+}
+}
+.sidebar .active {
+border-radius: 5px;
+box-shadow: 0 2px 5px 0 rgb(0 0 0 / 16%), 0 2px 10px 0 rgb(0 0 0 / 12%);
+}
+
+.sidebar-sticky {
+position: relative;
+top: 0;
+height: calc(100vh - 48px);
+padding-top: 0.5rem;
+overflow-x: hidden;
+overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
+</style>
+<body>
+    <h1> hello friend {{user}}</h1>
+    
+    <form action="/logout" method="post"> 
+
+        
+        <button type="submit">Logout</button>
+        
+    </form>
+
+    <!--Main Navigation-->
+    <header>
+        <!-- Sidebar -->
+        <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white" style="position: absolute; top: 60;">
+          <div class="position-sticky" >
+            <div class="list-group list-group-flush mx-3 mt-4">
+              <!-- Collapse 1 -->
+              <a class="list-group-item list-group-item-action py-2 ripple" aria-current="true"
+                data-mdb-toggle="collapse" href="#collapseExample1" aria-expanded="true"
+                aria-controls="collapseExample1">
+                <i class="fas fa-tachometer-alt fa-fw me-3"></i><span>Expanded menu</span>
+              </a>
+              <!-- Collapsed content -->
+              <ul id="collapseExample1" class="collapse show list-group list-group-flush">
+                
+                {% for users in allUsers %}
+                    <form action="/chat">
+                        <textarea  hidden name="username" >{{users.user_id}}</textarea>
+                        <textarea  hidden name="room" >{{users.username}}{{user}}</textarea>
+                        <button type="submit">{{users.username}}
+                            hey ahdhdhdh
+                        </button>
+                    </form>
+                {% endfor %}
+              </ul>
+              <!-- Collapse 1 -->
+
+              <!-- Collapse 2 -->
+              <a class="list-group-item list-group-item-action py-2 ripple" aria-current="true"
+                data-mdb-toggle="collapse" href="#collapseExample2" aria-expanded="true"
+                aria-controls="collapseExample2">
+                <i class="fas fa-chart-area fa-fw me-3"></i><span>Collapsed menu</span>
+              </a>
+              <!-- Collapsed content -->
+              <ul id="collapseExample2" class="collapse list-group list-group-flush">
+                <li class="list-group-item py-1">
+                  <a href="" class="text-reset">Link</a>
+                </li>
+                <li class="list-group-item py-1">
+                  <a href="" class="text-reset">Link</a>
+                </li>
+                <li class="list-group-item py-1">
+                  <a href="" class="text-reset">Link</a>
+                </li>
+                <li class="list-group-item py-1">
+                  <a href="" class="text-reset">Link</a>
+                </li>
+              </ul>
+              <!-- Collapse 2 -->
+            </div>
+          </div>
+        </nav>
+        <!-- Sidebar -->
+    </header>
+      <!--Main Navigation-->
+
+      <!--Main layout-->
+      <main style="margin-top: 58px;">
+        <div class="container pt-4"></div>
+      </main>
+      <!--Main layout-->
+    <div style="position: absolute; top: 100; left: 290;">
+        {% for users in allUsers %}
+            <div id="main" >
+                <h1> <a href="/gamer/{{ users.username }}"> {{users.username}} </a></h1>
+                
+                <!-- <form action="/dashboard" method="post"> 
+                    
+                    
+                    <input type="submit" name="addFollow" value={{users.username}}>
+                    
+                </form> -->
+            </div>
+        {% endfor %}
+
+
+        <body>
+            <h1>
+                welcome to chat room {{room}}
+            </h1>
+        
+            <div id="messages">
+                <!-- if session_id is hit -->
+                {% for message in messages%}
+                <div><b> {{message.sender}}&nbsp;[{{message.create_at}}]: &nbsp;</b> {{message.text}} </div>
+                {% endfor %}
+            
+                
+            </div>
+        
+            <form id="message_input_form">
+                <input type="text" id="message_input" placeholder="ENTER YOUR MESSAGE HERE">
+                <button type="submit">send</button>
+            </form>
+        
+        </body>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script>
+            
+            const socket = io.connect("http://127.0.0.1:5000/");
+        
+            socket.on('connect', function(){
+                socket.emit('join_room', {
+                    username: "{{ username }}",
+                    room: "{{ room }}"
+                });
+        
+                let message_input = document.getElementById('message_input')
+        
+                document.getElementById('message_input_form').onsubmit = function (e){
+                    e.preventDefault();
+                    let message = message_input.value.trim();
+                    //checks if the messge being sent is greater than 0
+                    if(message.length){
+                        socket.emit('send_message', {
+                            username: "{{ username }}",
+                            room: "{{ room }}",
+                            message: message
+                        })
+                    }
+                    message_input.value = '';
+                    message_input.focus();
+                }
+            });
+        
+            socket.on('receive_message', function(data) {
+                console.log(data);
+                const newNode = document.createElement('div');
+                newNode.innerHTML = `<b>${data.username}: &nbsp;</b> ${data.message}`;
+                document.getElementById('messages').appendChild(newNode);
+            })
+            //this gets the info from the input of the user 
+            socket.on('join_room_announcement', function(data){
+                console.log(data);
+                const newNode = document.createElement('div');
+                newNode.innerHTML = `<b>${data.username}</b> has joined the room`;
+                document.getElementById('messages').appendChild(newNode);
+            })
+        </script>
+    </div>
+
+{% endblock %}

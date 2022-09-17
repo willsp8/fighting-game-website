@@ -1,0 +1,12 @@
+{% extends '_layout.html' %}
+    {% block body %}
+        {% for user_following in followers %}
+                <h1>{{ user_following.username }} </h1>
+                <form action="/gamer/{{ user_following.username }}" method="post"> 
+                            
+                            
+                    <input type="submit" name="addFollow" value={{user_following.username}}>
+                    
+                </form>
+        {% endfor %}
+    {% endblock %} 

@@ -1,3 +1,5 @@
+{% extends '_layout.html' %}
+{% block body %}
 <style>
     #main {
     width: 200px;
@@ -13,31 +15,68 @@
 
 </style>
 
-<body>
-    <h1> hello friend {{user}}</h1>
+<style> 
+    .newspaper {
+      column-count: 1;
+      column-gap: 40px;
+      column-rule-style: solid;
+      column-rule-color: #ff0000;
+    }
+    </style>
+    </head>
+    <body>
     
-    <form action="/logout" method="post"> 
+    
+<!-- <section class="vh-100 bg-image" style="background-image: url('https://media4.giphy.com/media/wJ5QArIrc2DJvnJcYQ/giphy.gif?cid=790b76111bf9183a97f5d2f3205f29bcb6fee84727b04905&rid=giphy.gif&ct=g');"> -->
+    <h1>The column-rule-color Property</h1>
+    <p>The column-rule-color property sets the color of the rule between the columns of the element:</p>
+    
+    <div class="newspaper" >
+    Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Typi non habent claritatem insitam; est usus legentis in iis qui facit eorum claritatem. Investigationes demonstraverunt lectores legere me lius quod ii legunt saepius.
+    </div>
+    <body>
+        <div>
+            <a href="/following/{{user}}" > following</a>
+            <a href="/followers/{{user}}"> followers</a>
+        </div> 
+    </body>
 
+    <body>
+        <h1> hello friend {{user}}</h1>
         
-        <button type="submit">Logout</button>
-        
-    </form>
-
-    {% for users in allUsers %}
-        <div id="main">
-            <h1> <a href="/gamer/{{ users.username }}"> {{users.username}} </a></h1>
+        <form action="/logout" method="post"> 
+    
             
-            <!-- <form action="/dashboard" method="post"> 
+            <button type="submit">Logout</button>
+            
+        </form>
+    
+        {% for users in allUsers %}
+            <div id="main">
+                <h1> <a href="/gamer/{{ users.username }}"> {{users.username}} </a></h1>
                 
-                
-                <input type="submit" name="addFollow" value={{users.username}}>
-                  
-            </form> -->
-        </div>
-        
-    {% endfor %}
-    <a href="/game">
-        <button>play game</button>
-    </a>
-</body>
+                <!-- <form action="/dashboard" method="post"> 
+                    
+                    
+                    <input type="submit" name="addFollow" value={{users.username}}>
+                      
+                </form> -->
+            </div>
+            <form action="/chat">
+                <textarea type="hidden" name="username">{{users.user_id}}</textarea>
+                <textarea type="hidden" name="room">{{users.username}}{{user}}</textarea>
+                <button type="submit">chat</button>
+            </form>
 
+            
+            
+            
+        {% endfor %}
+        <a href="/game">
+            <button>play game</button>
+        </a>
+    </body>
+
+<!-- </section> -->
+
+{% endblock %}

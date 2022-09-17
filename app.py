@@ -22,6 +22,8 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = os.getenv('SECRET_KEY')
+socketio = SocketIO(app, cors_allowed_origins="*")
+
 
 
 bcrypt = Bcrypt()
@@ -49,11 +51,116 @@ class Following(db.Model):
         self.username = username
         self.follow_id = follow_id
 
+class Message(db.Model):
+    id = db.Column('id', db.Integer, primary_key=True)
+    room_id = db.Column('room_id', db.String)
+    text = db.Column('text', db.String)
+    sender = db.Column('sender', db.String)
+    create_at = db.Column('create_at', db.String)
+
+    def save_message(self, room_id, text, sender, create_at):
+        message = Message(room_id=room_id, text=text, sender=sender, create_at=create_at)
+        db.session.add(message)
+        db.session.commit()
+        return 
+    def find_room_id(self, room_id):
+        # this works
+        # search_room_id = Message.query.all()
+        search_room_id = Message.query.filter(Message.room_id == room_id).all()
+        print('heloo')
+        
+        return search_room_id
+message_repository_singleton = Message()  
+
+class History(db.Model):
+    id = db.Column('chat_id', db.Integer, primary_key=True)
+    message = db.Column('message', db.String)
+
+def get_messages(room_id):
+    messages = message_repository_singleton.find_room_id(room_id)
+    #for message in messages:
+    #    message['created_at'] = message['created_at'].strftime("%d %b, %H:%M")
+    return messages
+
+@app.route('/chat')
+def chat():
+    username = request.args.get('username')
+    room = request.args.get('room')
+    all_users = User.query.all()
+    if username and room:
+        messages = get_messages(room)
+        print('heloaao')
+        print(get_messages(room))
+        return render_template('chat_2.html', username=username, user=session['user'], room=room, allUsers=all_users, messages=messages)
+    else:
+        return redirect('/dashboard')
+
+@socketio.on('send_message')
+def handle_send_message_event(data):
+    app.logger.info("{} has sent message to the room {}: {}". format(data['username'],
+    data['room'], data['message']))
+
+    #message_to_save = Message()
+    message_repository_singleton.save_message(data['room'], data['message'], session['user'],  datetime.now())
+    socketio.emit('receive_message', data, room=data['room'])
+
+@socketio.on('join_room')
+def handle_join_room_event(data):
+    app.logger.info("{} has joined the room {}".format(data['username'], data['room']))
+    #this will make the client join a certain room
+    join_room(data['room'])
+    #this will send a message to everyone that someone has joined the room
+    socketio.emit('join_room_announcement', data)
+#second feature end
+
+#first chat first start
+
+    
+
+
+
+#socketIO chatroom
+@socketio.on('message')
+def handle_message(message):
+    print("recieved message: " + message)
+    
+    
+    if message != "User connected!":
+        send(message, broadcast=True)
+        message = History(message=message)
+        db.session.add(message)
+        db.session.commit()
+        
+
+
+    
 @app.get('/')
 def index():
     if 'user' in session:
        return redirect('/success')
     return render_template('landing_page.html')
+
+@app.get('/following/<user>')
+def following(user):
+    user_id = User.query.filter_by(username=user).first()
+    user_Follow_Table = Following.query.filter(Following.follow_id==user_id.user_id).all()
+    return render_template('following.html', user_Follow_Table=user_Follow_Table, user_id=user)
+
+@app.get('/followers/<user>')
+def followers(user):
+    user_id = User.query.filter_by(username=user).first()
+    all_user = User.query.all()
+    user_Follow_Table = Following.query.filter(Following.username==user_id.username).all()
+    followers = []
+
+    for f in user_Follow_Table:
+        for au in all_user:
+        
+            if(f.follow_id == au.user_id):
+                print(f.username, au.username)
+                print(f.follow_id, au.user_id)
+                followers.append(au)
+    return render_template('followers.html', user_Follow_Table=user_Follow_Table, user_id=user, followers=followers)
 
 @app.get('/game')
 def game():
@@ -116,9 +223,23 @@ def fail():
 
 @app.get('/dashboard')
 def dashboard():
+    username = request.args.get('username')
+    room = request.args.get('room')
     all_users = User.query.all()
     all_follows = Following.query.all()
-    return render_template('dashboard.html', user=session['user'], allUsers=all_users, allFollows = all_follows)
+    messages = get_messages(room)
+    
+    room = request.args.get('room')
+
+    username = request.args.get('username')
+    room = request.args.get('room')
+
+    if username and room:
+        messages = get_messages(room)
+        print('heloaao')
+        print(get_messages(room))
+        return render_template('dashboard.html', username=username, room=room, messages=messages)
+    return render_template('dashboard.html', user=session['user'], allUsers=all_users, allFollows = all_follows, username=username, room=room, messages=messages)
 
 # @app.post('/dashboard')
 # def add_user():
@@ -134,15 +255,23 @@ def dashboard():
 
 @app.get('/gamer/<username>')
 def viewProfile(username):
+    print(username)
+    otherusername = username
     single_user = User.query.filter_by(username=username).first()
     user_id = User.query.filter_by(username=session['user']).first()
-    user_Follow_Table2 = Following.query.query.filter_by(username=username).all()
+    user_Follow_Table2 = Following.query.filter(Following.username==otherusername).all()
     user_Follow_Table = None
+    print('my user')
+    print(user_id.user_id)
     for user in user_Follow_Table2:
         print(user.follow_id)
         if user.follow_id == user_id.user_id:
             user_Follow_Table = user
-            print(user_Follow_Table)
+            print(user_Follow_Table.follow_id)
+            print('different')
+            print(user_Follow_Table.follow_id)
+        else:
+            user_Follow_Table = None
     all_users = User.query.all()
     all_follows = Following.query.all()
     return render_template('viewProfile.html', user=session['user'], userFollowTable=user_Follow_Table, allUsers=all_users, allFollows = all_follows, singleUser=single_user, user_id=user_id)
@@ -152,7 +281,7 @@ def add_user(username):
     print(username)
     single_user = User.query.filter_by(username=username).first()
     user_id = User.query.filter_by(username=session['user']).first()
-    user_Follow_Table2 = Following.query.query.filter_by(username=username).all()
+    user_Follow_Table2 = Following.query.filter(Following.username==username).all()
     user_Follow_Table = None
     for user in user_Follow_Table2:
         print(user.follow_id)

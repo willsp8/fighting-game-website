@@ -14,32 +14,34 @@
     }
 
 </style>
-
-<body>
-    <h1> hello friend: {{singleUser.username}}</h1>
-    <h1> you are: {{user_id.username}}</h1>
-    <h1> , your id: {{user_id.user_id}}</h1>
-    <h1> , other user id: {{userFollowTable.follow_id}}</h1>
-    {% if user_id.user_id == userFollowTable.follow_id%}
-        <h1> unfollow</h1>
-        <form action="/gamer/{{ singleUser.username }}" method="post"> 
-                    
-                    
-            <input type="submit" name="addFollow" value={{singleUser.username}}>
-            
-        </form>
-    {%else%}
-        <h1> follow</h1>
-        <form action="/gamer/{{ singleUser.username }}" method="post"> 
-                    
-                    
-            <input type="submit" name="addFollow" value={{singleUser.username}}>
-            
-        </form>
-    {% endif%}
-
+<section class="vh-100 bg-image" style="background-image: url();">
+    <body>
+        <h1> this is other user: {{singleUser.username}} </h1>
+        <h1>  , you are: {{user_id.username}}</h1>
+        <h1> , your id: {{user_id.user_id}}</h1>
+        <h1> , other user id: {{userFollowTable.follow_id}}</h1>
+        {% if user_id.user_id == userFollowTable.follow_id%}
+            <h1> unfollow</h1>
+            <form action="/gamer/{{ singleUser.username }}" method="post"> 
+                        
+                        
+                <input type="submit" name="addFollow" value={{singleUser.username}}>
+                
+            </form>
+        {%else%}
+            <h1> follow</h1>
+            <form action="/gamer/{{ singleUser.username }}" method="post"> 
+                        
+                        
+                <input type="submit" name="addFollow" value={{singleUser.username}}>
+                
+            </form>
+        {% endif%}
     
-    <a href="/game">
-        <button>play game</button>
-    </a>
-</body>
+        
+        <a href="/game">
+            <button>play game</button>
+        </a>
+    </body>
+
+</section>
