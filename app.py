@@ -87,11 +87,12 @@ def chat():
     username = request.args.get('username')
     room = request.args.get('room')
     all_users = User.query.all()
+    single_user = User.query.filter_by(username=session['user']).first()
     if username and room:
         messages = get_messages(room)
         print('heloaao')
         print(get_messages(room))
-        return render_template('chat_2.html', username=username, user=session['user'], room=room, allUsers=all_users, messages=messages)
+        return render_template('chat_2.html', username=username, user=session['user'], room=room, allUsers=all_users, messages=messages, singleUser=single_user)
     else:
         return redirect('/dashboard')
 
@@ -142,6 +143,7 @@ def index():
 
 @app.get('/following/<user>')
 def following(user):
+    print()
     user_id = User.query.filter_by(username=user).first()
     user_Follow_Table = Following.query.filter(Following.follow_id==user_id.user_id).all()
     return render_template('following.html', user_Follow_Table=user_Follow_Table, user_id=user)
@@ -161,6 +163,9 @@ def followers(user):
                 print(f.follow_id, au.user_id)
                 followers.append(au)
     return render_template('followers.html', user_Follow_Table=user_Follow_Table, user_id=user, followers=followers)
+
+#delete method
+
 
 @app.get('/game')
 def game():
@@ -225,6 +230,7 @@ def fail():
 def dashboard():
     username = request.args.get('username')
     room = request.args.get('room')
+    single_user = User.query.filter_by(username=session['user']).first()
     all_users = User.query.all()
     all_follows = Following.query.all()
     messages = get_messages(room)
@@ -233,13 +239,14 @@ def dashboard():
 
     username = request.args.get('username')
     room = request.args.get('room')
+    
 
     if username and room:
         messages = get_messages(room)
         print('heloaao')
         print(get_messages(room))
-        return render_template('dashboard.html', username=username, room=room, messages=messages)
-    return render_template('dashboard.html', user=session['user'], allUsers=all_users, allFollows = all_follows, username=username, room=room, messages=messages)
+        return render_template('dashboard.html', username=username, room=room, messages=messages, singleUser=single_user)
+    return render_template('dashboard.html', user=session['user'], allUsers=all_users, allFollows = all_follows, username=username, room=room, messages=messages, singleUser=single_user)
 
 # @app.post('/dashboard')
 # def add_user():
@@ -261,20 +268,19 @@ def viewProfile(username):
     user_id = User.query.filter_by(username=session['user']).first()
     user_Follow_Table2 = Following.query.filter(Following.username==otherusername).all()
     user_Follow_Table = None
-    print('my user')
-    print(user_id.user_id)
     for user in user_Follow_Table2:
-        print(user.follow_id)
         if user.follow_id == user_id.user_id:
             user_Follow_Table = user
-            print(user_Follow_Table.follow_id)
-            print('different')
-            print(user_Follow_Table.follow_id)
+            switchToUnfollow='false'
+            switchTofollow='true'
         else:
+            switchToUnfollow='true'
+            switchTofollow='false'
             user_Follow_Table = None
+
     all_users = User.query.all()
     all_follows = Following.query.all()
-    return render_template('viewProfile.html', user=session['user'], userFollowTable=user_Follow_Table, allUsers=all_users, allFollows = all_follows, singleUser=single_user, user_id=user_id)
+    return render_template('viewProfile.html', switchToUnfollow=switchToUnfollow, switchTofollow=switchTofollow, user=session['user'], userFollowTable=user_Follow_Table, allUsers=all_users, allFollows = all_follows, singleUser=single_user, user_id=user_id)
 
 @app.post('/gamer/<username>')
 def add_user(username):
@@ -283,18 +289,49 @@ def add_user(username):
     user_id = User.query.filter_by(username=session['user']).first()
     user_Follow_Table2 = Following.query.filter(Following.username==username).all()
     user_Follow_Table = None
+    
     for user in user_Follow_Table2:
-        print(user.follow_id)
         if user.follow_id == user_id.user_id:
             user_Follow_Table = user
-            print(user.follow_id)
-    add_follow = request.form.get('addFollow', '')
-    follow_id = User.query.filter_by(username=session['user']).first()
-    new_follow = Following(username=add_follow, follow_id=follow_id.user_id)
-    db.session.add(new_follow)
-    db.session.commit()
 
-    return render_template('viewProfile.html', user=session['user'], userFollowTable=user_Follow_Table, singleUser=single_user, user_id=user_id)
+    follow_bool = request.form.get('follow', '')
+    unfollow_bool = request.form.get('unfollow', '')
+    print(follow_bool)
+    follow_bool_2 = ''
+    unfollow_bool_2 = ''
+    if(follow_bool == 'true'):
+        print('should follow')
+        add_follow = request.form.get('addFollow', '')
+        follow_id = User.query.filter_by(username=session['user']).first()
+        new_follow = Following(username=add_follow, follow_id=follow_id.user_id)
+        db.session.add(new_follow)
+        db.session.commit()
+        follow_bool_2 = 'true'
+        unfollow_bool_2 = 'false'
+        user_Follow_Table2 = Following.query.filter(Following.username==username).all()
+        return render_template('viewProfile.html', switchToUnfollow='true', switchTofollow='false', follow_bool_2=follow_bool_2, unfollow_bool_2=unfollow_bool_2,  user=session['user'], userFollowTable=user_Follow_Table, singleUser=single_user, user_id=user_id)
+    if(unfollow_bool == 'true'):
+        print('should unfollow')
+        delete_follow = request.form.get('deleteFollow', '')
+        all_follows = Following.query.filter(Following.follow_id == user_id.user_id)
+        for all_f in all_follows:
+            print(all_f)
+            if(all_f != None):
+                
+            
+                if (all_f.username == single_user.username):
+                    follow_id = User.query.filter_by(username=delete_follow).first()
+                    follow_to_delete =  Following.query.filter(Following.following_id==all_f.following_id).first()
+                    print(follow_to_delete.username)
+                    print(follow_to_delete.follow_id)
+                
+                    db.session.delete(follow_to_delete)
+                    db.session.commit()
+        unfollow_bool_2 = 'true'
+        follow_bool_2 = 'false'
+        return render_template('viewProfile.html', switchToUnfollow='false', switchTofollow='true', follow_bool_2=follow_bool_2, unfollow_bool_2=unfollow_bool_2,  user=session['user'], userFollowTable=user_Follow_Table, singleUser=single_user, user_id=user_id)
+    return render_template('viewProfile.html', switchToUnfollow='false', switchTofollow='false', follow_bool_2=follow_bool_2, unfollow_bool_2=unfollow_bool_2,  user=session['user'], userFollowTable=user_Follow_Table, singleUser=single_user, user_id=user_id)
+
     
 
 @app.post('/logout')

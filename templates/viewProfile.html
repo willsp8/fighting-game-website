@@ -1,5 +1,6 @@
 
-
+{% extends '_layout.html' %}
+{% block body %}
 <style>
     #main {
     width: 200px;
@@ -14,34 +15,120 @@
     }
 
 </style>
-<section class="vh-100 bg-image" style="background-image: url();">
-    <body>
-        <h1> this is other user: {{singleUser.username}} </h1>
-        <h1>  , you are: {{user_id.username}}</h1>
-        <h1> , your id: {{user_id.user_id}}</h1>
-        <h1> , other user id: {{userFollowTable.follow_id}}</h1>
-        {% if user_id.user_id == userFollowTable.follow_id%}
-            <h1> unfollow</h1>
-            <form action="/gamer/{{ singleUser.username }}" method="post"> 
-                        
-                        
-                <input type="submit" name="addFollow" value={{singleUser.username}}>
-                
-            </form>
-        {%else%}
-            <h1> follow</h1>
-            <form action="/gamer/{{ singleUser.username }}" method="post"> 
-                        
-                        
-                <input type="submit" name="addFollow" value={{singleUser.username}}>
-                
-            </form>
-        {% endif%}
-    
-        
-        <a href="/game">
-            <button>play game</button>
-        </a>
-    </body>
 
+
+
+<head>
+    <script>
+        document.querySelectorAll('button').forEach((button) => {
+            button.addEventListener('click', (e) =>{
+                document.querySelector('#hunfollow').style = none
+                
+            })
+        })
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('#button').click(function(){
+                            
+                var draftOrPublish = $('select#draftOrPublish').val();
+                console.log(draftOrPublish)
+                if (draftOrPublish == 0) {
+                    document.querySelector('#h1').innerHTML = 'whast '
+                    $('button#button').text('Save as Draft')
+                    
+                } else if (draftOrPublish == 1) {
+                    document.querySelector('#h1').innerHTML = 'whadddst '
+                    $('button#button').text('Publish')
+                }
+               // $('#form1').attr('action', '/gamer/{{ singleUser.username }}');
+            });
+        });
+    </script>
+</head>
+
+<section class="vh-100 bg-image" style="background-image: url('https://media0.giphy.com/media/2kUt993krujHRni1C1/giphy.gif?cid=790b7611db8ae185977f0b977f7c41a7b06596fce4039ef8&rid=giphy.gif&ct=g');">
+    <div class="mask d-flex align-items-center h-100 gradient-custom-3">
+      <div class="container h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+          <div class="col-12 col-md-9 col-lg-10 col-xl-10">
+            <div class="card" style="border-radius: 15px;">
+              <div class="card-body p-10">
+                <style>
+                  .scroll-bar {
+                    overflow:scroll;
+                    height:700px;
+                  }
+                </style>
+                
+                    <body>
+                        
+                        <script>
+                            document.querySelectorAll('button').forEach((button) => {
+                                button.addEventListener('click', (e) =>{
+                                    document.querySelector('#h1').innerHTML = '$'
+                                    console.log(e)
+                                })
+                            })
+                        </script>
+                        <h1> this is other user: {{singleUser.username}} </h1>
+                        <h1>  , </h1>
+                        <h1> , your id: {{user_id.user_id}}</h1>
+                        <h1> , other user id: {{userFollowTable.follow_id}}</h1>
+                        
+                        {% if switchToUnfollow == 'true' %}
+                            <div id="unfollow" name="unfollow" style="display: block;">
+
+                            
+                                <h1> unfollow</h1>
+                                
+                                <form id="form1" name="form1"action="/gamer/{{ singleUser.username }}" method="post"> 
+                                    <!-- <p name="select" id="draftOrPublish" value="0">0</p>         -->
+                                    <textarea type="hidden" name="follow">false</textarea>       
+                                    <textarea type="hidden" name="unfollow">true</textarea>             
+                                    <input type="submit" name="deleteFollow" value={{singleUser.username}} >
+                                </form>
+                            </div>
+                        {% endif%}
+                        {%if switchTofollow == 'true' and switchToUnfollow == 'false' %}
+                            <div id="follow">
+
+                                <h1> follow</h1>
+                                <form action="/gamer/{{ singleUser.username }}" method="post"> 
+                                    <p>follow</p>
+                                    <textarea type="hidden" name="follow">true</textarea>       
+                                    <textarea type="hidden" name="unfollow">false</textarea>        
+                                    <input type="submit" name="addFollow" value={{singleUser.username}}>
+                                    
+                                </form>
+                            </div>
+                        {% endif%}
+
+                        {% if user_id.user_id > singleUser.user_id %}
+                            <form action="/chat">
+                                <textarea  name="username">{{singleUser.user_id}}</textarea>
+                                <textarea  name="room">{{user_id.username}}{{singleUser.username}}</textarea>
+                                <button type="submit">chat</button>
+                            </form>
+                        {%else%}
+                        <form action="/chat">
+                            <textarea  name="username">{{singleUser.user_id}}</textarea>
+                            <textarea  name="room">{{singleUser.username}}{{user_id.username}}</textarea>
+                            <button type="submit">chat</button>
+                        </form>
+                        {% endif %}
+                        
+                        
+                        <a href="/followers/{{singleUser.username}}" > view Followers</a>
+                        <a href="/following/{{singleUser.username}}" > following</a>
+                        <a href="/game">
+                            <button>play game</button>
+                        </a>
+                    </body>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
+{% endblock %}

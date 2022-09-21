@@ -448,11 +448,14 @@ const keys = {
     ArrowUp: {
         pressed: false
     },
+    q: {
+        pressed: false
+    }
 }
 
 
 
-decreaeTimer()
+
 let numOfPressed = 0
 let jumps = 0
 let jumpsMax = 5.1
@@ -468,6 +471,8 @@ let walkRight = false
 let walkLeft = false
 let lastKey1 = ''
 let ALCAttack = 0
+let healthPotions = 10
+let healthPotionCoolDown
 //animation loop 
 const movables = [...boundariesRoof, ...boundaries, ...boundaries2, startingPoint, 
     startingPoint2, startingPoint3, startingPoint4, startingPoint5, 
@@ -905,6 +910,31 @@ function animate(){
         player.attackBox.offset.x = 20
     }
 
+    if(keys.q.pressed == true && player.health < 95 && healthPotions > 0 ){
+        console.log(player.health)
+        console.log('health')
+        healthPotionCoolDown = true
+        setTimeout(() => {
+            healthPotionCoolDown = true
+        }, 1000)
+        if(healthPotionCoolDown == true)
+        {
+            
+            player.health += 3
+            document.querySelector('#playerHealth').style.width = player.health + '%'
+            setTimeout(() => {
+                healthPotions -= 1
+                healthPotionCoolDown = false
+            }, 1000)
+        }
+
+        document.querySelector('#magic').innerHTML = healthPotions
+        console.log('amount of potions')
+        console.log(healthPotions)
+        keys.q.pressed = false
+        
+    }
+
     
 
     // all the enemy stfff
@@ -931,7 +961,7 @@ function animate(){
     enemyDeath(enemy4, startingPoint4, enemyArea4)
     enemyDeath(enemy5, startingPoint5, enemyArea5)
     enemyDeath(enemy6, startingPoint6, enemyArea6)
-    enemyDeath(enemy6, startingPoint6, enemyArea6)
+    enemyDeath(enemy7, startingPoint7, enemyArea7)
     // enemyAI function 
     enemyAI(player, enemy, startingPoint, enemyArea)
     enemyAI(player, enemy2, startingPoint2, enemyArea2)
@@ -952,6 +982,7 @@ function animate(){
     playerAttack(player, enemy4)
     playerAttack(player, enemy5)
     playerAttack(player, enemy6)
+    playerAttack(player, enemy7)
 
     if(enemy.isAttacking && enemy.frameCurrent == 0){
         enemy.isAttacking = false
@@ -965,9 +996,9 @@ function animate(){
     }
 
     //end game based on health
-    if(enemy.health <= 0 || player.health <= 0){
-        determineWinnder({player, enemy, timerId})
-    }
+    // if(enemy.health <= 0 || player.health <= 0){
+    //     determineWinnder({player, enemy, timerId})
+    // }
 
 
    
@@ -1028,15 +1059,20 @@ function enemyDeath(enemy, startingPoint, enemyArea){
     if(enemy.dead && enemy.image == enemy.sprites.death.image && enemy.frameCurrent ==  enemy.sprites.death.fm - 1)
     {
         
-        enemy.attackBox.position.x = 1000
-        enemy.velocity.x = 1000
-        enemyArea.position.x = 1000
-        enemy.position.x = 1000
-        startingPoint.position.x = 1000
+        enemy.attackBox.position.x = 5000
+        enemy.velocity.x = 5000
+        enemyArea.position.x = 5000
+        enemy.position.x = 5000
+        startingPoint.position.x = 5000
+        
     }
-    if(enemy.health <= 0){
+    if(enemy.health <= 0 ){
+        
         enemy.switchSprite('death')
         enemy.position.x = enemy.position.x
+    }
+    if(enemy.health <= 0 && enemy.position.x != 5000){
+        healthPotions += .05
     }
 
 }
@@ -1292,6 +1328,9 @@ window.addEventListener('keydown', (event) => {
                 break
             case ' ':
                 player.attack(player.lastKey, false, false, true, false)
+                break
+            case 'q':
+                keys.q.pressed = true
                 break
             
         }

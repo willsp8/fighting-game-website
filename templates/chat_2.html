@@ -42,15 +42,187 @@ overflow-x: hidden;
 overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
 }
 </style>
-<body>
-    <h1> hello friend {{user}}</h1>
+<style> 
+    .scrollbar {
+  margin-left: 30px;
+  float: left;
+  height: 700px;
+  width: 940px;
+  background: #fff;
+  overflow-y: scroll;
+  margin-bottom: 25px;
+  }
+  .force-overflow {
+  min-height: 450px;
+  }
+
+  .scrollbar-primary::-webkit-scrollbar {
+  width: 12px;
+  background-color: #F5F5F5; }
+
+  .scrollbar-primary::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+  background-color: #4285F4; }
+
+  .scrollbar-danger::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+  background-color: #F5F5F5;
+  border-radius: 10px; }
+
+  .scrollbar-danger::-webkit-scrollbar {
+  width: 12px;
+  background-color: #F5F5F5; }
+
+  .scrollbar-danger::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+  background-color: #ff3547; }
+
+  .scrollbar-warning::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+  background-color: #F5F5F5;
+  border-radius: 10px; }
+
+  .scrollbar-warning::-webkit-scrollbar {
+  width: 12px;
+  background-color: #F5F5F5; }
+
+  .scrollbar-warning::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+  background-color: #FF8800; }
+
+  .scrollbar-success::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+  background-color: #F5F5F5;
+  border-radius: 10px; }
+
+  .scrollbar-success::-webkit-scrollbar {
+  width: 12px;
+  background-color: #F5F5F5; }
+
+  .scrollbar-success::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+  background-color: #00C851; }
+
+  .scrollbar-info::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+  background-color: #F5F5F5;
+  border-radius: 10px; }
+
+  .scrollbar-info::-webkit-scrollbar {
+  width: 12px;
+  background-color: #F5F5F5; }
+
+  .scrollbar-info::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+  background-color: #33b5e5; }
+
+  .scrollbar-default::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+  background-color: #F5F5F5;
+  border-radius: 10px; }
+
+  .scrollbar-default::-webkit-scrollbar {
+  width: 12px;
+  background-color: #F5F5F5; }
+
+  .scrollbar-default::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+  background-color: #2BBBAD; }
+
+  .scrollbar-secondary::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+  background-color: #F5F5F5;
+  border-radius: 10px; }
+
+  .scrollbar-secondary::-webkit-scrollbar {
+  width: 12px;
+  background-color: #F5F5F5; }
+
+  .scrollbar-secondary::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+  background-color: #aa66cc; }
+
+  .gradient-custom-2 {
+  /* fallback for old browsers */
+  background: #fccb90;
+
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: -webkit-linear-gradient(to right, #7580bb, rgba(240, 149, 128, 0.2), #dd3675, #b44593);
+
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(to right, rgba(25, 95, 161, 0.2), #967aa3, #505583, #7e5973);
+  }
+
+  .tiledBackground {
+      background-image: url(https://www.mozilla.org/media/img/logos/firefox/logo-quantum.9c5e96634f92.png);
+      background-size: 150px;
+      width: 300px;
+      height: 300px;
+      border: 2px solid;
+      color: pink;
+  }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+                        <script>
+                            
+                            const socket = io.connect("http://127.0.0.1:5000/");
+                        
+                            socket.on('connect', function(){
+                                socket.emit('join_room', {
+                                    username: "{{ username }}",
+                                    room: "{{ room }}"
+                                });
+                        
+                                let message_input = document.getElementById('message_input')
+                        
+                                document.getElementById('message_input_form').onsubmit = function (e){
+                                    e.preventDefault();
+                                    let message = message_input.value.trim();
+                                    //checks if the messge being sent is greater than 0
+                                    if(message.length){
+                                        socket.emit('send_message', {
+                                            username: "{{ username }}",
+                                            room: "{{ room }}",
+                                            message: message
+                                        })
+                                    }
+                                    message_input.value = '';
+                                    message_input.focus();
+                                }
+                            });
+                        
+                            socket.on('receive_message', function(data) {
+                                console.log(data);
+                                const newNode = document.createElement('div');
+                                newNode.innerHTML = `<b>${data.username}: &nbsp;</b> ${data.message}`;
+                                document.getElementById('messages').appendChild(newNode);
+                            })
+                            //this gets the info from the input of the user 
+                            socket.on('', function(data){
+                                console.log(data);
+                                const newNode = document.createElement('div');
+                                newNode.innerHTML = `<b>${data.username}</b> has joined the room`;
+                                document.getElementById('messages').appendChild(newNode);
+                            })
+                        </script>
+
+    <!-- <h1> hello friend {{user}}</h1>
     
     <form action="/logout" method="post"> 
 
         
         <button type="submit">Logout</button>
         
-    </form>
+    </form> -->
 
     <!--Main Navigation-->
     <header>
@@ -68,13 +240,19 @@ overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
               <ul id="collapseExample1" class="collapse show list-group list-group-flush">
                 
                 {% for users in allUsers %}
-                    <form action="/chat">
-                        <textarea  hidden name="username" >{{users.user_id}}</textarea>
-                        <textarea  hidden name="room" >{{users.username}}{{user}}</textarea>
-                        <button type="submit">{{users.username}}
-                            hey ahdhdhdh
-                        </button>
-                    </form>
+                    {% if singleUser.user_id > users.user_id %}
+                        <form action="/chat">
+                            <textarea style="display:none;"  name="username">{{users.user_id}}</textarea>
+                            <textarea  style="display:none;" name="room">{{user}}{{users.username}}</textarea>
+                            <button type="submit">{{users.username}}</button>
+                        </form>
+                    {%else%}
+                        <form action="/chat">
+                            <textarea  style="display:none;" name="username">{{users.user_id}}</textarea>
+                            <textarea  style="display:none;" name="room">{{users.username}}{{user}}</textarea>
+                            <button type="submit">{{users.username}}</button>
+                        </form>
+                    {% endif %}
                 {% endfor %}
               </ul>
               <!-- Collapse 1 -->
@@ -109,89 +287,67 @@ overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
       <!--Main Navigation-->
 
       <!--Main layout-->
-      <main style="margin-top: 58px;">
+      <!-- <main style="margin-top: 58px;">
         <div class="container pt-4"></div>
-      </main>
+      </main> -->
       <!--Main layout-->
-    <div style="position: absolute; top: 100; left: 290;">
-        {% for users in allUsers %}
-            <div id="main" >
-                <h1> <a href="/gamer/{{ users.username }}"> {{users.username}} </a></h1>
+      <section class="vh-100 bg-image" style="background-image: url('https://media2.giphy.com/media/xUPGcHzj4iOAmcp5Ic/giphy.gif?cid=790b76112b0b47302a5b88e0ac27a9445817d6f9e1ed4622&rid=giphy.gif&ct=g');">
+        <div class="mask d-flex align-items-center h-80 gradient-custom-3">
+          <div class="container h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+              <div class="col-12 col-md-9 col-lg-10 col-xl-10">
+                <div class="card" style="border-radius: 0px;">
+                  <div class="card-body p-10">
+                    <style>
+                      .scroll-bar {
+                        overflow:scroll;
+                        height:700px;
+                      }
+                    </style>
+                    <div class="scroll-bar scrollbar-secondary">
+                        
+                        {% for users in allUsers %}
+                            <div id="main" >
+                                <h1> <a href="/gamer/{{ users.username }}"> {{users.username}} </a></h1>
+                                
+                                <!-- <form action="/dashboard" method="post"> 
+                                    
+                                    
+                                    <input type="submit" name="addFollow" value={{users.username}}>
+                                    
+                                </form> -->
+                            </div>
+                        {% endfor %}
                 
-                <!-- <form action="/dashboard" method="post"> 
-                    
-                    
-                    <input type="submit" name="addFollow" value={{users.username}}>
-                    
-                </form> -->
-            </div>
-        {% endfor %}
-
-
-        <body>
-            <h1>
-                welcome to chat room {{room}}
-            </h1>
-        
-            <div id="messages">
-                <!-- if session_id is hit -->
-                {% for message in messages%}
-                <div><b> {{message.sender}}&nbsp;[{{message.create_at}}]: &nbsp;</b> {{message.text}} </div>
-                {% endfor %}
-            
                 
+                        
+                            <h1>
+                                welcome to chat room {{room}}
+                            </h1>
+                        
+                            <div id="messages">
+                                <!-- if session_id is hit -->
+                                {% for message in messages%}
+                                <div><b> {{message.sender}}&nbsp;[{{message.create_at}}]: &nbsp;</b> {{message.text}} </div>
+                                {% endfor %}
+                            
+                                
+                            </div>
+                        
+                            <form id="message_input_form">
+                                <input type="text" id="message_input" placeholder="ENTER YOUR MESSAGE HERE">
+                                <button type="submit">send</button>
+                            </form>
+                        
+                       
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-        
-            <form id="message_input_form">
-                <input type="text" id="message_input" placeholder="ENTER YOUR MESSAGE HERE">
-                <button type="submit">send</button>
-            </form>
-        
-        </body>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-        <script>
-            
-            const socket = io.connect("http://127.0.0.1:5000/");
-        
-            socket.on('connect', function(){
-                socket.emit('join_room', {
-                    username: "{{ username }}",
-                    room: "{{ room }}"
-                });
-        
-                let message_input = document.getElementById('message_input')
-        
-                document.getElementById('message_input_form').onsubmit = function (e){
-                    e.preventDefault();
-                    let message = message_input.value.trim();
-                    //checks if the messge being sent is greater than 0
-                    if(message.length){
-                        socket.emit('send_message', {
-                            username: "{{ username }}",
-                            room: "{{ room }}",
-                            message: message
-                        })
-                    }
-                    message_input.value = '';
-                    message_input.focus();
-                }
-            });
-        
-            socket.on('receive_message', function(data) {
-                console.log(data);
-                const newNode = document.createElement('div');
-                newNode.innerHTML = `<b>${data.username}: &nbsp;</b> ${data.message}`;
-                document.getElementById('messages').appendChild(newNode);
-            })
-            //this gets the info from the input of the user 
-            socket.on('join_room_announcement', function(data){
-                console.log(data);
-                const newNode = document.createElement('div');
-                newNode.innerHTML = `<b>${data.username}</b> has joined the room`;
-                document.getElementById('messages').appendChild(newNode);
-            })
-        </script>
-    </div>
+          </div>
+        </div>
+      </section>      
+    
 
 {% endblock %}
