@@ -82,10 +82,12 @@ def get_messages(room_id):
     #    message['created_at'] = message['created_at'].strftime("%d %b, %H:%M")
     return messages
 
-@app.route('/chat')
-def chat():
-    username = request.args.get('username')
-    room = request.args.get('room')
+@app.route('/chat/<username>/<room>')
+def chat(username, room):
+    print('opps')
+    print(username)
+    #username = request.args.get('username')
+    #room = request.args.get('room')
     all_users = User.query.all()
     single_user = User.query.filter_by(username=session['user']).first()
     if username and room:
@@ -98,6 +100,7 @@ def chat():
 
 @socketio.on('send_message')
 def handle_send_message_event(data):
+    print(data)
     app.logger.info("{} has sent message to the room {}: {}". format(data['username'],
     data['room'], data['message']))
 
@@ -268,6 +271,8 @@ def viewProfile(username):
     user_id = User.query.filter_by(username=session['user']).first()
     user_Follow_Table2 = Following.query.filter(Following.username==otherusername).all()
     user_Follow_Table = None
+    switchToUnfollow =''
+    switchTofollow =''
     for user in user_Follow_Table2:
         if user.follow_id == user_id.user_id:
             user_Follow_Table = user

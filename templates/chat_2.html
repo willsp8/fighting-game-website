@@ -172,48 +172,97 @@ overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-                        <script>
-                            
-                            const socket = io.connect("http://127.0.0.1:5000/");
-                        
-                            socket.on('connect', function(){
-                                socket.emit('join_room', {
-                                    username: "{{ username }}",
-                                    room: "{{ room }}"
-                                });
-                        
-                                let message_input = document.getElementById('message_input')
-                        
-                                document.getElementById('message_input_form').onsubmit = function (e){
-                                    e.preventDefault();
-                                    let message = message_input.value.trim();
-                                    //checks if the messge being sent is greater than 0
-                                    if(message.length){
-                                        socket.emit('send_message', {
-                                            username: "{{ username }}",
-                                            room: "{{ room }}",
-                                            message: message
-                                        })
-                                    }
-                                    message_input.value = '';
-                                    message_input.focus();
-                                }
-                            });
-                        
-                            socket.on('receive_message', function(data) {
-                                console.log(data);
-                                const newNode = document.createElement('div');
-                                newNode.innerHTML = `<b>${data.username}: &nbsp;</b> ${data.message}`;
-                                document.getElementById('messages').appendChild(newNode);
-                            })
-                            //this gets the info from the input of the user 
-                            socket.on('', function(data){
-                                console.log(data);
-                                const newNode = document.createElement('div');
-                                newNode.innerHTML = `<b>${data.username}</b> has joined the room`;
-                                document.getElementById('messages').appendChild(newNode);
-                            })
-                        </script>
+
+<script>
+    
+    const socket = io.connect("http://127.0.0.1:5000/");
+
+    socket.on('connect', function(){
+        socket.emit('join_room', {
+            username: "{{ username }}",
+            room: "{{ room }}"
+        });
+
+        let message_input = document.getElementById('message_input')
+        console.log(message_input)
+        document.getElementById('message_input_form').onsubmit = function (e){
+            e.preventDefault();
+            let message = message_input.value.trim();
+            //checks if the messge being sent is greater than 0
+            if(message.length){
+                socket.emit('send_message', {
+                    username: "{{ username }}",
+                    room: "{{ room }}",
+                    message: message
+                })
+            }
+            message_input.value = '';
+            message_input.focus();
+        }
+    });
+
+
+    socket.on('receive_message', function(data) {
+        console.log(data.username);
+        
+        // li.className = 'p-2 border-bottom'
+        const newNode = document.createElement('div');
+        const div = document.createElement('div')
+        // senderSide = document.querySelector('#receiverSide').innerHTML
+        // if(senderSide != null){
+        //     console.log()
+        //     console.log(senderSide)
+        //     console.log('model ' + senderSide)
+        //     if(data.username == senderSide){
+        //         receiverSide = document.querySelector('#numberOfnotification').innerHTML
+        //         document.querySelector('#numberOfnotification').innerHTML = receiverSide + 1
+                
+        //     }
+        // }
+        
+        
+        //senderUser = document.querySelector('#').innerHTML
+        
+            
+            div.innerHTML = `
+                        <div>
+                            <li class="d-flex justify-content-between mb-4">
+                                <div class="card mask-custom w-100">
+                                  <div class="card-header d-flex justify-content-between p-3"
+                                    style="border-bottom: 1px solid rgba(255,255,255,.3);">
+                                    <p class="fw-bold mb-0">${data.username}</p>
+                                    <p class="text-light small mb-0"><i class="far fa-clock"></i> </p>
+                                  </div>
+                                  <div class="card-body">
+                                    <p class="mb-0">
+                                        ${data.message}
+                                    </p>
+                                  </div>
+                                </div>
+                                <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-8.webp" alt="avatar"
+                                  class="rounded-circle d-flex align-self-start ms-3 shadow-1-strong" width="60">
+                              </li>
+                        </div>
+                    `;
+        
+        
+
+            // assuming elements contains string of html with your elements
+            
+        //newNode.innerHTML = `<b>${data.username}: &nbsp;</b> ${data.message}`;
+        //$('.PostWrapper').append($('#mytemplate').html());
+        //document.getElementById('messages').appendChild(newNode);
+        document.getElementById('messages').appendChild(div);
+    })
+    //this gets the info from the input of the user 
+    socket.on('', function(data){
+        console.log(data);
+        const newNode = document.createElement('div');
+        newNode.innerHTML = `<b>${data.username}</b> has joined the room`;
+        document.getElementById('messages').appendChild(newNode);
+    })
+</script>
+
 
     <!-- <h1> hello friend {{user}}</h1>
     
@@ -225,65 +274,7 @@ overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
     </form> -->
 
     <!--Main Navigation-->
-    <header>
-        <!-- Sidebar -->
-        <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white" style="position: absolute; top: 60;">
-          <div class="position-sticky" >
-            <div class="list-group list-group-flush mx-3 mt-4">
-              <!-- Collapse 1 -->
-              <a class="list-group-item list-group-item-action py-2 ripple" aria-current="true"
-                data-mdb-toggle="collapse" href="#collapseExample1" aria-expanded="true"
-                aria-controls="collapseExample1">
-                <i class="fas fa-tachometer-alt fa-fw me-3"></i><span>Expanded menu</span>
-              </a>
-              <!-- Collapsed content -->
-              <ul id="collapseExample1" class="collapse show list-group list-group-flush">
-                
-                {% for users in allUsers %}
-                    {% if singleUser.user_id > users.user_id %}
-                        <form action="/chat">
-                            <textarea style="display:none;"  name="username">{{users.user_id}}</textarea>
-                            <textarea  style="display:none;" name="room">{{user}}{{users.username}}</textarea>
-                            <button type="submit">{{users.username}}</button>
-                        </form>
-                    {%else%}
-                        <form action="/chat">
-                            <textarea  style="display:none;" name="username">{{users.user_id}}</textarea>
-                            <textarea  style="display:none;" name="room">{{users.username}}{{user}}</textarea>
-                            <button type="submit">{{users.username}}</button>
-                        </form>
-                    {% endif %}
-                {% endfor %}
-              </ul>
-              <!-- Collapse 1 -->
-
-              <!-- Collapse 2 -->
-              <a class="list-group-item list-group-item-action py-2 ripple" aria-current="true"
-                data-mdb-toggle="collapse" href="#collapseExample2" aria-expanded="true"
-                aria-controls="collapseExample2">
-                <i class="fas fa-chart-area fa-fw me-3"></i><span>Collapsed menu</span>
-              </a>
-              <!-- Collapsed content -->
-              <ul id="collapseExample2" class="collapse list-group list-group-flush">
-                <li class="list-group-item py-1">
-                  <a href="" class="text-reset">Link</a>
-                </li>
-                <li class="list-group-item py-1">
-                  <a href="" class="text-reset">Link</a>
-                </li>
-                <li class="list-group-item py-1">
-                  <a href="" class="text-reset">Link</a>
-                </li>
-                <li class="list-group-item py-1">
-                  <a href="" class="text-reset">Link</a>
-                </li>
-              </ul>
-              <!-- Collapse 2 -->
-            </div>
-          </div>
-        </nav>
-        <!-- Sidebar -->
-    </header>
+    
       <!--Main Navigation-->
 
       <!--Main layout-->
@@ -291,63 +282,225 @@ overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
         <div class="container pt-4"></div>
       </main> -->
       <!--Main layout-->
-      <section class="vh-100 bg-image" style="background-image: url('https://media2.giphy.com/media/xUPGcHzj4iOAmcp5Ic/giphy.gif?cid=790b76112b0b47302a5b88e0ac27a9445817d6f9e1ed4622&rid=giphy.gif&ct=g');">
-        <div class="mask d-flex align-items-center h-80 gradient-custom-3">
-          <div class="container h-100">
-            <div class="row d-flex justify-content-center align-items-center h-100">
-              <div class="col-12 col-md-9 col-lg-10 col-xl-10">
-                <div class="card" style="border-radius: 0px;">
-                  <div class="card-body p-10">
-                    <style>
-                      .scroll-bar {
-                        overflow:scroll;
-                        height:700px;
-                      }
-                    </style>
-                    <div class="scroll-bar scrollbar-secondary">
-                        
-                        {% for users in allUsers %}
-                            <div id="main" >
-                                <h1> <a href="/gamer/{{ users.username }}"> {{users.username}} </a></h1>
+      <section class="gradient-custom">
+        <div class="container py-5">
+      
+          <div class="row">
+      
+            <div class="col-md-6 col-lg-5 col-xl-5 mb-4 mb-md-0">
+      
+              <h5 class="font-weight-bold mb-3 text-center text-white">Member</h5>
+      
+              <div class="card mask-custom">
+                <div class="card-body">
+      
+                  <ul class="list-unstyled mb-0">
+                    {% for users in allUsers %}
+                    
+                        {% if singleUser.user_id > users.user_id %}
+                        <div>
+                            <li class="p-2 border-bottom" style="border-bottom: 1px solid rgba(255,255,255,.3) !important;">
+                                <a href="/chat/{{users.user_id}}/{{user}}{{users.username}}" class="d-flex justify-content-between link-light">
+                                  <div class="d-flex flex-row">
+                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-8.webp" alt="avatar"
+                                      class="rounded-circle d-flex align-self-center me-3 shadow-1-strong" width="60">
+                                      
+                                    <div class="pt-1">
+                                        <p class="fw-bold mb-0">{{users.username}}</p>
+                                        <p class="small text-white">Hello, Are you there?</p>
+                                      
+                                    </div>
+                                  </div>
+                                  <div class="pt-1">
+                                    <p class="small text-white mb-1">Just now</p>
+                                    <span class="badge bg-danger float-end">1</span>
+                                  </div>
                                 
-                                <!-- <form action="/dashboard" method="post"> 
+                                </a>
+    
+                                <form id="chatForm" action="/chat">
+                                    <textarea style="display:none;"  name="username">{{users.user_id}}</textarea>
+                                    <textarea  style="display:none;" name="room">{{user}}{{users.username}}</textarea>
                                     
-                                    
-                                    <input type="submit" name="addFollow" value={{users.username}}>
-                                    
-                                </form> -->
-                            </div>
-                        {% endfor %}
-                
-                
+                                        
+                                </form>
+                              </li>
+                        </div>
                         
-                            <h1>
-                                welcome to chat room {{room}}
-                            </h1>
+                        {%else%}
+                        <div>
+
                         
-                            <div id="messages">
-                                <!-- if session_id is hit -->
-                                {% for message in messages%}
-                                <div><b> {{message.sender}}&nbsp;[{{message.create_at}}]: &nbsp;</b> {{message.text}} </div>
-                                {% endfor %}
+                        <li class="p-2 border-bottom" style="border-bottom: 1px solid rgba(255,255,255,.3) !important;">
+                            <a href="/chat/{{users.user_id}}/{{users.username}}{{user}}" class="d-flex justify-content-between link-light">
+                              <div class="d-flex flex-row">
+                                <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-8.webp" alt="avatar"
+                                  class="rounded-circle d-flex align-self-center me-3 shadow-1-strong" width="60">
+                                  
+                                <div class="pt-1">
+                                    <p class="fw-bold mb-0">{{users.username}}</p>
+                                    <p class="small text-white">Hello, Are you there?</p>
+                                  
+                                </div>
+                              </div>
+                              <div class="pt-1">
+                                <p class="small text-white mb-1">Just now</p>
+                                <span class="badge bg-danger float-end">1</span>
+                              </div>
                             
+                            </a>
+
+                            <form id="chatForm" action="/chat">
+                                <textarea style="display:none;"  name="username">{{users.user_id}}</textarea>
+                                <textarea  style="display:none;" name="room">{{users.username}}{{user}}</textarea>
                                 
-                            </div>
-                        
-                            <form id="message_input_form">
-                                <input type="text" id="message_input" placeholder="ENTER YOUR MESSAGE HERE">
-                                <button type="submit">send</button>
+                                    
                             </form>
-                        
-                       
-                    </div>
-                  </div>
+                          </li>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+
+                    
+                  </ul>
+      
                 </div>
               </div>
+      
             </div>
+      
+            <div class="col-md-6 col-lg-7 col-xl-7">
+      
+              <ul class="list-unstyled text-white">
+                <style>
+                    .scroll-bar {
+                      overflow:scroll;
+                      height:700px;
+                    }
+                  </style>
+                  
+                                  <!-- Sidebar -->
+                <div class="scroll-bar scrollbar-secondary" style="height: 800; overflow-x: hidden">
+                <div id="messages">
+                    <!-- if session_id is hit -->
+                    {% for message in messages%}
+                        {% if message.sender == user %}
+                        <textarea id ='senderSide'style="display:none;"  name="sendleftSide">{{message.sender}}</textarea>
+                        <textarea id ='receiverSide'style="display:none;"  name="sendleftSide">{{singleUser.user_id}}</textarea>
+                        <div>
+                            <li class="d-flex justify-content-between mb-4">
+                                <div class="card mask-custom w-100">
+                                  <div class="card-header d-flex justify-content-between p-3"
+                                    style="border-bottom: 1px solid rgba(255,255,255,.3);">
+                                    <p class="fw-bold mb-0">{{message.sender}}</p>
+                                    <p class="text-light small mb-0"><i class="far fa-clock"></i> {{message.create_at}}</p>
+                                  </div>
+                                  <div class="card-body">
+                                    <p class="mb-0">
+                                        {{message.text}}
+                                    </p>
+                                  </div>
+                                </div>
+                                <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-8.webp" alt="avatar"
+                                  class="rounded-circle d-flex align-self-start ms-3 shadow-1-strong" width="60">
+                              </li>
+                        </div>
+                            
+                        {%else%}
+                        <textarea id ='senderSide'style="display:none;"  name="sendleftSide">{{message.sender}}</textarea>
+                        <textarea id ='receiverSide'style="display:none;"  name="sendleftSide">{{singleUser.user_id}}</textarea>
+                        <div>
+                            <li class="d-flex justify-content-between mb-4">
+                                <div class="card mask-custom w-100">
+                                  <div class="card-header d-flex justify-content-between p-3"
+                                    style="border-bottom: 1px solid rgba(255,255,255,.3);">
+                                    <p class="fw-bold mb-0">{{message.sender}}</p>
+                                    <p class="text-light small mb-0"><i class="far fa-clock"></i> {{message.create_at}}</p>
+                                  </div>
+                                  <div class="card-body">
+                                    <p class="mb-0">
+                                        {{message.text}}
+                                    </p>
+                                  </div>
+                                </div>
+                                <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-5.webp" alt="avatar"
+                                  class="rounded-circle d-flex align-self-start ms-3 shadow-1-strong" width="60">
+                              </li>
+                        </div>
+                        {% endif %}
+                        {% if message.sender != user %}
+                        <textarea id ='senderSide'style="display:none;"  name="sendleftSide">{{message.sender}}</textarea>
+                        <textarea id ='receiverSide'style="display:none;"  name="sendleftSide">{{singleUser.user_id}}</textarea>
+                        <div>
+                            <li class="d-flex justify-content-between mb-4">
+                                <div class="card mask-custom w-100">
+                                  <div class="card-header d-flex justify-content-between p-3"
+                                    style="border-bottom: 1px solid rgba(255,255,255,.3);">
+                                    <p class="fw-bold mb-0">{{message.sender}}</p>
+                                    <p class="text-light small mb-0"><i class="far fa-clock"></i> {{message.create_at}}</p>
+                                  </div>
+                                  <div class="card-body">
+                                    <p class="mb-0">
+                                        {{message.text}}
+                                    </p>
+                                  </div>
+                                </div>
+                                <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-5.webp" alt="avatar"
+                                  class="rounded-circle d-flex align-self-start ms-3 shadow-1-strong" width="60">
+                              </li>
+                        </div>
+                        {%else%}
+                        <textarea id ='senderSide'style="display:none;"  name="sendleftSide">{{message.sender}}</textarea>
+                        <textarea id ='receiverSide'style="display:none;"  name="sendleftSide">{{singleUser.user_id}}</textarea>
+                        <div>
+                            <li class="d-flex justify-content-between mb-4">
+                                <div class="card mask-custom w-100">
+                                  <div class="card-header d-flex justify-content-between p-3"
+                                    style="border-bottom: 1px solid rgba(255,255,255,.3);">
+                                    <p class="fw-bold mb-0">{{message.sender}}</p>
+                                    <p class="text-light small mb-0"><i class="far fa-clock"></i> {{message.create_at}}</p>
+                                  </div>
+                                  <div class="card-body">
+                                    <p class="mb-0">
+                                        {{message.text}}
+                                    </p>
+                                  </div>
+                                </div>
+                                <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-5.webp" alt="avatar"
+                                  class="rounded-circle d-flex align-self-start ms-3 shadow-1-strong" width="60">
+                              </li>
+                        </div>
+                        {% endif %}
+                    <!-- <div><b> {{message.sender}}&nbsp;[{{message.create_at}}]: &nbsp;</b> {{message.text}} </div> -->
+                    {% endfor %}
+                
+                    
+                </div>
+                </div>
+                <li class="mb-3">
+                    <div class="form-outline form-white">
+                        <textarea id ='receiverSide'style="display:none;"  name="sendleftSide">{{singleUser.user_id}}</textarea>
+
+                        <label class="form-label" >Message</label>
+                      <form id="message_input_form">
+                        <input type="text" id="message_input" placeholder="ENTER YOUR MESSAGE HERE">
+                        
+                        
+                        <!-- <input type="text" id="message_input" placeholder="ENTER YOUR MESSAGE HERE"> -->
+                        <button type="submit" class="btn btn-light btn-lg btn-rounded ">send</button>
+                    </form>
+                    </div>
+                  </li>
+              </ul>
+      
+            </div>
+      
           </div>
+      
         </div>
-      </section>      
+      </section>
+      
+          
     
 
 {% endblock %}

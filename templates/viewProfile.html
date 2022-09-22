@@ -28,24 +28,7 @@
         })
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script>
-        $(document).ready(function(){
-            $('#button').click(function(){
-                            
-                var draftOrPublish = $('select#draftOrPublish').val();
-                console.log(draftOrPublish)
-                if (draftOrPublish == 0) {
-                    document.querySelector('#h1').innerHTML = 'whast '
-                    $('button#button').text('Save as Draft')
-                    
-                } else if (draftOrPublish == 1) {
-                    document.querySelector('#h1').innerHTML = 'whadddst '
-                    $('button#button').text('Publish')
-                }
-               // $('#form1').attr('action', '/gamer/{{ singleUser.username }}');
-            });
-        });
-    </script>
+    
 </head>
 
 <section class="vh-100 bg-image" style="background-image: url('https://media0.giphy.com/media/2kUt993krujHRni1C1/giphy.gif?cid=790b7611db8ae185977f0b977f7c41a7b06596fce4039ef8&rid=giphy.gif&ct=g');">
