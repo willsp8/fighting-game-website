@@ -154,8 +154,19 @@ def index():
 def following(user):
     print()
     user_id = User.query.filter_by(username=user).first()
+    main_user =  User.query.filter_by(username=session['user']).first()
     user_Follow_Table = Following.query.filter(Following.follow_id==user_id.user_id).all()
-    return render_template('following.html', user_Follow_Table=user_Follow_Table, user_id=user)
+    all_user = User.query.all()
+    following = []
+    for f in user_Follow_Table:
+        for au in all_user:
+        
+            if(f.username == au.username and main_user.user_id == f.follow_id):
+                print(f.username, au.username)
+                print(f.follow_id, au.user_id)
+                following.append(au)
+                
+    return render_template('following.html', user_Follow_Table=user_Follow_Table, user_id=user, following=following)
 
 @app.get('/followers/<user>')
 def followers(user):

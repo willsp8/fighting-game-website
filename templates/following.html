@@ -1,6 +1,6 @@
 {% extends '_layout.html' %}
 {% block body %}
-<section class="vh-100 bg-image" style="background-image: url('https://media2.giphy.com/media/xUPGcHzj4iOAmcp5Ic/giphy.gif?cid=790b76112b0b47302a5b88e0ac27a9445817d6f9e1ed4622&rid=giphy.gif&ct=g');">
+<!-- <section class="vh-100 bg-image" style="background-image: url('https://media2.giphy.com/media/xUPGcHzj4iOAmcp5Ic/giphy.gif?cid=790b76112b0b47302a5b88e0ac27a9445817d6f9e1ed4622&rid=giphy.gif&ct=g');">
     <div class="mask d-flex align-items-center h-100 gradient-custom-3">
       <div class="container h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
@@ -16,7 +16,7 @@
 
                 {% for user_following in user_Follow_Table %}
                 <h1>{{ user_following.username }} </h1>
-                <form action="/gamer/{{ user_following.username }}" method="post"> 
+                <form action="/gamer/{{user_following.username}}" method="post"> 
                             
                             
                     <input type="submit" name="addFollow" value={{user_following.username}}>
@@ -27,6 +27,60 @@
             </div>
         </div>
     </div>
-</section>
-    
+</section> -->
+<section class="gradient-custom">
+    <div class="container py-5">
+  
+      <div class="row">
+        
+        <div class="">
+  
+          <h5 class="font-weight-bold mb-3 text-center text-white">Following</h5>
+  
+          <div class="card mask-custom">
+            <div class="card-body">
+                <div class="scroll-bar scrollbar-secondary" style="height: 800; overflow-x: hidden; overflow-y: auto;">
+                
+                    <ul class="list-unstyled mb-0">
+
+                        
+                        {% for following in following %} 
+                            
+                            <li class="p-2 border-bottom" style="border-bottom: 1px solid rgba(255,255,255,.3) !important;">
+                                <a href="/gamer/{{following.username}}" class="d-flex justify-content-between link-light">
+                                <div class="d-flex flex-row">
+                                    <img src="{{following.profile_pic}}" alt="avatar"
+                                    class="rounded-circle d-flex align-self-center me-3 shadow-1-strong" width="60">
+                                    <div class="pt-1">
+                                    <p class="fw-bold mb-0">{{following.username}}</p>
+                                    <p class="small text-white">{{following.user_id}}</p>
+                                    </div>
+                                </div>
+                                <div class="pt-1">
+                                    <p class="small text-white mb-1">Just now</p>
+                                    <span class="badge bg-danger float-end">1</span>
+                                </div>
+                                </a>
+                            </li>
+                            
+                        {% endfor %}
+                        
+                      
+                      
+                      
+                    </ul>
+        
+                  </div>
+            </div>
+            
+          </div>
+  
+        </div>
+  
+        
+  
+      </div>
+  
+    </div>
+</section> 
 {% endblock %} 

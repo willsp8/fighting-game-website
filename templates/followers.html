@@ -1,32 +1,60 @@
 {% extends '_layout.html' %}
     {% block body %}
-    <section class="vh-100 bg-image" style="background-image: url('https://media0.giphy.com/media/2kUt993krujHRni1C1/giphy.gif?cid=790b7611db8ae185977f0b977f7c41a7b06596fce4039ef8&rid=giphy.gif&ct=g');">
-        <div class="mask d-flex align-items-center h-100 gradient-custom-3">
-          <div class="container h-100">
-            <div class="row d-flex justify-content-center align-items-center h-100">
-              <div class="col-12 col-md-9 col-lg-10 col-xl-10">
-                <div class="card" style="border-radius: 15px;">
-                  <div class="card-body p-10">
-                    <style>
-                      .scroll-bar {
-                        overflow:scroll;
-                        height:700px;
-                      }
-                    </style>
-    
-                    {% for user_following in followers %}
-                        <h1>{{ user_following.username }} </h1>
-                        <form action="/gamer/{{ user_following.username }}" method="post"> 
-                                
-                                
-                            <input type="submit" name="addFollow" value={{user_following.username}}>
-                        
-                        </form>
-                    {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+
+    <section class="gradient-custom">
+        <div class="container py-5">
         
-    {% endblock %} 
+            <div class="row">
+            
+            <div class="">
+        
+                <h5 class="font-weight-bold mb-3 text-center text-white">Following</h5>
+        
+                <div class="card mask-custom">
+                <div class="card-body">
+                    <div class="scroll-bar scrollbar-secondary" style="height: 800; overflow-x: hidden; overflow-y: auto;">
+                    
+                        <ul class="list-unstyled mb-0">
+    
+                            
+                            {% for user_following in followers %} 
+                                
+                                <li class="p-2 border-bottom" style="border-bottom: 1px solid rgba(255,255,255,.3) !important;">
+                                    <a href="/gamer/{{user_following.username}}" class="d-flex justify-content-between link-light">
+                                    <div class="d-flex flex-row">
+                                        <img src="{{user_following.profile_pic}}" alt="avatar"
+                                        class="rounded-circle d-flex align-self-center me-3 shadow-1-strong" width="60">
+                                        <div class="pt-1">
+                                        <p class="fw-bold mb-0">{{user_following.username}}</p>
+                                        
+                                        </div>
+                                    </div>
+                                    <div class="pt-1">
+                                        <p class="small text-white mb-1">Just now</p>
+                                        <span class="badge bg-danger float-end">1</span>
+                                    </div>
+                                    </a>
+                                </li>
+                                
+                            {% endfor %}
+                            
+                            
+                            
+                            
+                        </ul>
+            
+                        </div>
+                </div>
+                
+                </div>
+        
+            </div>
+        
+            
+        
+            </div>
+        
+        </div>
+    </section>    
+    
+{% endblock %} 
