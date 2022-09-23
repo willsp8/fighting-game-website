@@ -1,3 +1,4 @@
+from cProfile import Profile
 from email import message
 from enum import unique
 from datetime import datetime
@@ -35,10 +36,11 @@ class User(db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, nullable=False, unique=True)
     password = db.Column(db.String, nullable=False)
-
-    def __init__(self, username, password) -> None:
+    profile_pic = db.Column(db.String, nullable=False)
+    def __init__(self, username, password, profile_pic) -> None:
         self.password = password
         self.username = username
+        self.profile_pic = profile_pic
 
 class Following(db.Model):
     __tablename__ = 'following'
@@ -57,9 +59,10 @@ class Message(db.Model):
     text = db.Column('text', db.String)
     sender = db.Column('sender', db.String)
     create_at = db.Column('create_at', db.String)
+    profile_pic = db.Column('profile_pic', db.String)
 
-    def save_message(self, room_id, text, sender, create_at):
-        message = Message(room_id=room_id, text=text, sender=sender, create_at=create_at)
+    def save_message(self, room_id, text, sender, create_at, profile_pic):
+        message = Message(room_id=room_id, text=text, sender=sender, create_at=create_at, profile_pic=profile_pic)
         db.session.add(message)
         db.session.commit()
         return 
@@ -103,9 +106,12 @@ def handle_send_message_event(data):
     print(data)
     app.logger.info("{} has sent message to the room {}: {}". format(data['username'],
     data['room'], data['message']))
-
+    print('friend')
+    print(data['username'])
+    porfile_pic = User.query.filter_by(user_id=data['username']).first()
+    print(porfile_pic)
     #message_to_save = Message()
-    message_repository_singleton.save_message(data['room'], data['message'], session['user'],  datetime.now())
+    message_repository_singleton.save_message(data['room'], data['message'], session['user'],  datetime.now(), porfile_pic.profile_pic)
     socketio.emit('receive_message', data, room=data['room'])
 
 @socketio.on('join_room')
@@ -184,13 +190,12 @@ def get_register_page():
 def register():
     username = request.form.get('username', '')
     password = request.form.get('password', '')
-
+    profile_pic = 'https://media2.giphy.com/media/l1fDKnffMrl6TUQRVS/giphy.gif'
     if username == '' or password == '':
         abort(400)
 
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-
-    new_user = User(username, hashed_password)
+    new_user = User(username, hashed_password, profile_pic)
     db.session.add(new_user)
     db.session.commit()
     return redirect('/')
@@ -271,21 +276,25 @@ def viewProfile(username):
     user_id = User.query.filter_by(username=session['user']).first()
     user_Follow_Table2 = Following.query.filter(Following.username==otherusername).all()
     user_Follow_Table = None
+    numberOfFollowers = 0
     switchToUnfollow =''
     switchTofollow =''
     for user in user_Follow_Table2:
         if user.follow_id == user_id.user_id:
             user_Follow_Table = user
-            switchToUnfollow='false'
-            switchTofollow='true'
-        else:
             switchToUnfollow='true'
             switchTofollow='false'
+        else:
+            switchToUnfollow='false'
+            switchTofollow='true'
             user_Follow_Table = None
 
     all_users = User.query.all()
     all_follows = Following.query.all()
-    return render_template('viewProfile.html', switchToUnfollow=switchToUnfollow, switchTofollow=switchTofollow, user=session['user'], userFollowTable=user_Follow_Table, allUsers=all_users, allFollows = all_follows, singleUser=single_user, user_id=user_id)
+    for followers in user_Follow_Table2:
+            print(followers)
+            numberOfFollowers = numberOfFollowers + 1
+    return render_template('viewProfile.html', switchToUnfollow=switchToUnfollow, switchTofollow=switchTofollow, user=session['user'], userFollowTable=user_Follow_Table, allUsers=all_users, allFollows = all_follows, singleUser=single_user, user_id=user_id, numberOfFollowers=numberOfFollowers)
 
 @app.post('/gamer/<username>')
 def add_user(username):
@@ -294,6 +303,8 @@ def add_user(username):
     user_id = User.query.filter_by(username=session['user']).first()
     user_Follow_Table2 = Following.query.filter(Following.username==username).all()
     user_Follow_Table = None
+    
+    
     
     for user in user_Follow_Table2:
         if user.follow_id == user_id.user_id:
@@ -304,6 +315,11 @@ def add_user(username):
     print(follow_bool)
     follow_bool_2 = ''
     unfollow_bool_2 = ''
+
+    numberOfFollowers = 0
+    for followers in user_Follow_Table2:
+        print(followers)
+        numberOfFollowers = numberOfFollowers + 1
     if(follow_bool == 'true'):
         print('should follow')
         add_follow = request.form.get('addFollow', '')
@@ -314,7 +330,12 @@ def add_user(username):
         follow_bool_2 = 'true'
         unfollow_bool_2 = 'false'
         user_Follow_Table2 = Following.query.filter(Following.username==username).all()
-        return render_template('viewProfile.html', switchToUnfollow='true', switchTofollow='false', follow_bool_2=follow_bool_2, unfollow_bool_2=unfollow_bool_2,  user=session['user'], userFollowTable=user_Follow_Table, singleUser=single_user, user_id=user_id)
+        numberOfFollowers = 0
+        for followers in user_Follow_Table2:
+            print(followers)
+            numberOfFollowers = numberOfFollowers + 1
+            
+        return render_template('viewProfile.html', switchToUnfollow='true', switchTofollow='false', follow_bool_2=follow_bool_2, unfollow_bool_2=unfollow_bool_2,  user=session['user'], userFollowTable=user_Follow_Table, singleUser=single_user, user_id=user_id, numberOfFollowers=numberOfFollowers)
     if(unfollow_bool == 'true'):
         print('should unfollow')
         delete_follow = request.form.get('deleteFollow', '')
@@ -334,8 +355,12 @@ def add_user(username):
                     db.session.commit()
         unfollow_bool_2 = 'true'
         follow_bool_2 = 'false'
-        return render_template('viewProfile.html', switchToUnfollow='false', switchTofollow='true', follow_bool_2=follow_bool_2, unfollow_bool_2=unfollow_bool_2,  user=session['user'], userFollowTable=user_Follow_Table, singleUser=single_user, user_id=user_id)
-    return render_template('viewProfile.html', switchToUnfollow='false', switchTofollow='false', follow_bool_2=follow_bool_2, unfollow_bool_2=unfollow_bool_2,  user=session['user'], userFollowTable=user_Follow_Table, singleUser=single_user, user_id=user_id)
+        numberOfFollowers = 0
+        for followers in user_Follow_Table2:
+            print(followers)
+            numberOfFollowers = numberOfFollowers + 1
+        return render_template('viewProfile.html', switchToUnfollow='false', switchTofollow='true', follow_bool_2=follow_bool_2, unfollow_bool_2=unfollow_bool_2,  user=session['user'], userFollowTable=user_Follow_Table, singleUser=single_user, user_id=user_id, numberOfFollowers=numberOfFollowers)
+    return render_template('viewProfile.html', switchToUnfollow='false', switchTofollow='false', follow_bool_2=follow_bool_2, unfollow_bool_2=unfollow_bool_2,  user=session['user'], userFollowTable=user_Follow_Table, singleUser=single_user, user_id=user_id, numberOfFollowers=numberOfFollowers)
 
     
 
